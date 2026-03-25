@@ -1,0 +1,20 @@
+# IntelliJ
+.idea
+*.iml
+
+# Java
+target/
+build/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# Flutter
+.build/
+.dart_tool/
