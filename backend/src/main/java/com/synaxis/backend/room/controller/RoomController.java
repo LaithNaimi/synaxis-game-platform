@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/rooms")
+@RequestMapping("/api/room")
 public class RoomController {
 
     private final RoomService roomService;
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ApiSuccessResponse<CreateRoomResponse>> createRoom(@Valid @RequestBody CreateRoomRequest request) {
         return ResponseEntity.ok(ApiSuccessResponse.success(roomService.createRoom(request)));
     }
