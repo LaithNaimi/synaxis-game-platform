@@ -1,4 +1,3 @@
-
 package com.synaxis.backend.room.dto;
 
 import com.synaxis.backend.room.model.RoomStatus;
@@ -13,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateRoomResponse {
+public class JoinRoomResponse {
 
     private String roomCode;
     private String playerId;
