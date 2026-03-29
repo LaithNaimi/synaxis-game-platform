@@ -61,10 +61,16 @@ public class Room {
         if (players.isEmpty()) {
             return;
         }
-
         boolean hasHost = players.stream().anyMatch(PlayerSession::isHost);
         if (!hasHost) {
             players.getFirst().setHost(true);
+        }
+    }
+
+    public void markPlayerConnected(String playerId) {
+        PlayerSession player = findPlayerById(playerId);
+        if (player != null) {
+            player.setConnected(true);
         }
     }
 }

@@ -36,4 +36,13 @@ public class RoomController {
         roomService.leaveRoom(roomCode, request);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{roomCode}/reconnect")
+    public ResponseEntity<ApiSuccessResponse<ReconnectRoomResponse>> reconnectRoom(
+            @PathVariable String roomCode,
+            @Valid @RequestBody ReconnectRoomRequest request
+    ) {
+        ReconnectRoomResponse response = roomService.reconnectRoom(roomCode, request);
+        return ResponseEntity.ok(ApiSuccessResponse.success(response));
+    }
 }

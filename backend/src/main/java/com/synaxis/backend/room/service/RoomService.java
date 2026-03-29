@@ -166,5 +166,39 @@ public class RoomService {
             roomRepository.save(room);
         });
     }
+
+    public ReconnectRoomResponse reconnectRoom(String roomCode, ReconnectRoomRequest request) {
+        return roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            PlayerSession player = room.findPlayerById(request.getPlayerId());
+            if (player == null || !player.getPlayerToken().equals(request.getPlayerToken())) {
+                throw new PlayerNotAuthorizedException();
+            }
+
+            room.markPlayerConnected(request.getPlayerId());
+            roomRepository.save(room);
+
+            List<PlayerSummaryResponse> playerSummaries = room.getPlayers()
+                    .stream()
+                    .map(existingPlayer -> new PlayerSummaryResponse(
+                            existingPlayer.getPlayerId(),
+                            existingPlayer.getPlayerName(),
+                            existingPlayer.isHost()
+                    ))
+                    .toList();
+
+            return new ReconnectRoomResponse(
+                    room.getRoomCode(),
+                    player.getPlayerId(),
+                    player.getPlayerName(),
+                    player.getPlayerToken(),
+                    player.isHost(),
+                    room.getStatus(),
+                    playerSummaries
+            );
+        });
+    }
 }
 
