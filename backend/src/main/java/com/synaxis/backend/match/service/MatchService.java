@@ -1,8 +1,6 @@
 package com.synaxis.backend.match.service;
 
-import com.synaxis.backend.match.model.MatchState;
-import com.synaxis.backend.match.model.MatchStatus;
-import com.synaxis.backend.match.model.RoundWord;
+import com.synaxis.backend.match.model.*;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.word.CefrWordSelector;
 import com.synaxis.backend.word.model.Word;
@@ -27,9 +25,9 @@ public class MatchService {
                 totalRounds
         );
 
-        return MatchState.builder()
+        MatchState matchState = MatchState.builder()
                 .totalRounds(totalRounds)
-                .currentRoundNumber(0)
+                .currentRoundNumber(1)
                 .status(MatchStatus.COUNTDOWN)
                 .selectedWords(
                         words.stream()
@@ -42,6 +40,24 @@ public class MatchService {
 
 
                 )
+                .build();
+
+        matchState.setCurrentRound(createRoundState(matchState, 1));
+
+        return matchState;
+    }
+
+
+    public RoundState createRoundState(MatchState matchState, int roundNumber) {
+        if(roundNumber < 1 || roundNumber > matchState.getTotalRounds()) {
+            throw new IllegalArgumentException("Invalid round number: " + roundNumber);
+        }
+
+        RoundWord roundWord = matchState.getSelectedWords().get(roundNumber - 1);
+        return RoundState.builder()
+                .roundNumber(roundNumber)
+                .roundWord(roundWord)
+                .status(RoundStatus.PREPARING)
                 .build();
     }
 }

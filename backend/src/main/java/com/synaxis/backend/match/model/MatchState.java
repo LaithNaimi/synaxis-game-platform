@@ -21,6 +21,7 @@ public class MatchState {
     private int totalRounds;
     private int currentRoundNumber;
     private MatchStatus status;
+    private RoundState currentRound;
 
     @Builder.Default
     private List<RoundWord> selectedWords = new ArrayList<>();
