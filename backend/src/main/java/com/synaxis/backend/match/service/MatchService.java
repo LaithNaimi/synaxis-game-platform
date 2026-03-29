@@ -2,6 +2,7 @@ package com.synaxis.backend.match.service;
 
 import com.synaxis.backend.match.model.MatchState;
 import com.synaxis.backend.match.model.MatchStatus;
+import com.synaxis.backend.match.model.RoundWord;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.word.CefrWordSelector;
 import com.synaxis.backend.word.model.Word;
@@ -32,30 +33,15 @@ public class MatchService {
                 .status(MatchStatus.COUNTDOWN)
                 .selectedWords(
                         words.stream()
-                                .map(Word::getWord)
-                                .collect(Collectors.toList())
+                                .map(word -> RoundWord.builder()
+                                        .word(word.getWord())
+                                        .arabicMeaning(word.getArabicMeaning())
+                                        .englishDefinition(word.getEnglishDefinition())
+                                        .build()
+                                ).toList()
+
+
                 )
                 .build();
     }
 }
-
-/*
-* package com.synaxis.backend.match.service;
-
-import com.synaxis.backend.match.model.MatchState;
-import com.synaxis.backend.match.model.MatchStatus;
-import com.synaxis.backend.room.model.Room;
-import com.synaxis.backend.word.CefrWordSelector;
-import com.synaxis.backend.word.model.Word;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Service
-public class MatchService {
-
-
-
-}*/

@@ -23,5 +23,5 @@ public class MatchState {
     private MatchStatus status;
 
     @Builder.Default
-    private List<String> selectedWords = new ArrayList<>();
+    private List<RoundWord> selectedWords = new ArrayList<>();
 }
