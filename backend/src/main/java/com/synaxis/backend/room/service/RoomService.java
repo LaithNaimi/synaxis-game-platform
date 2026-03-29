@@ -4,12 +4,16 @@ import com.synaxis.backend.common.exception.GameAlreadyStartedException;
 import com.synaxis.backend.common.exception.PlayerNotAuthorizedException;
 import com.synaxis.backend.common.exception.RoomFullException;
 import com.synaxis.backend.common.exception.RoomNotFoundException;
+import com.synaxis.backend.match.model.MatchState;
+import com.synaxis.backend.match.service.MatchService;
+import com.synaxis.backend.messaging.GameEventPublisher;
 import com.synaxis.backend.room.dto.*;
 import com.synaxis.backend.room.model.PlayerSession;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.room.model.RoomSettings;
 import com.synaxis.backend.room.model.RoomStatus;
 import com.synaxis.backend.room.repository.RoomRepository;
+import com.synaxis.backend.room.ws.event.GameStartedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +26,8 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
     private final RoomLockManager roomLockManager;
+    private final MatchService matchService;
+    private final GameEventPublisher gameEventPublisher;
     private static final int ROOM_CODE_LENGTH = 6;
     private static final int PLAYER_ID_LENGTH = 8;
 
@@ -198,6 +204,26 @@ public class RoomService {
                     room.getStatus(),
                     playerSummaries
             );
+        });
+    }
+
+    public void startGame(String roomCode) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            if (room.getStatus() != RoomStatus.WAITING) {
+                throw new GameAlreadyStartedException();
+            }
+
+            MatchState matchState = matchService.createMatchState(room);
+
+            room.setMatchState(matchState);
+            room.setStatus(RoomStatus.IN_GAME);
+
+            roomRepository.save(room);
+
+            gameEventPublisher.publishGameStarted(room.getRoomCode());
         });
     }
 }

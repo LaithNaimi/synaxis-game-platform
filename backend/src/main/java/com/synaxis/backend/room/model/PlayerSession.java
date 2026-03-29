@@ -14,4 +14,9 @@ public class PlayerSession {
     private String playerToken;
     private boolean host;
     private boolean connected;
+
+    private int score;
+    private int health;
+    private long totalSolveTimeMs;
+    private int roundsWonFirst;
 }

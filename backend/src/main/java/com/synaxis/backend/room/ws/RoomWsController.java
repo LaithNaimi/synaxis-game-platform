@@ -1,6 +1,7 @@
 package com.synaxis.backend.room.ws;
 
 import com.synaxis.backend.messaging.GameEventPublisher;
+import com.synaxis.backend.room.service.RoomService;
 import com.synaxis.backend.room.ws.command.GuessLetterCommand;
 import com.synaxis.backend.room.ws.command.StartGameCommand;
 import com.synaxis.backend.room.ws.event.GameStartedEvent;
@@ -13,17 +14,12 @@ import org.springframework.stereotype.Controller;
 public class RoomWsController {
 
     private final CommandValidationService commandValidationService;
-    private final GameEventPublisher gameEventPublisher;
+    private final RoomService roomService;
 
     @MessageMapping("/game.start")
     public void startGame(StartGameCommand command) {
-        AuthorizedPlayerContext context = commandValidationService.validateHostStartGameCommand(command);
-
-        GameStartedEvent event = new GameStartedEvent();
-        event.setType("GAME_STARTED");
-        event.setRoomCode(context.getRoom().getRoomCode());
-
-        gameEventPublisher.publishRoomEvent(context.getRoom().getRoomCode(), event);
+        commandValidationService.validateHostStartGameCommand(command);
+        roomService.startGame(command.getRoomCode());
     }
 
     @MessageMapping("/game.guess-letter")

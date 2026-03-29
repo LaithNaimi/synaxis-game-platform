@@ -1,5 +1,6 @@
 package com.synaxis.backend.room.model;
 
+import com.synaxis.backend.match.model.MatchState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class Room {
     private String roomCode;
     private RoomStatus status;
     private RoomSettings settings;
+    private MatchState matchState;
 
     @Builder.Default
     private List<PlayerSession> players = new ArrayList<>();
@@ -71,6 +73,15 @@ public class Room {
         PlayerSession player = findPlayerById(playerId);
         if (player != null) {
             player.setConnected(true);
+        }
+    }
+
+    public void initializePlayersForMatch() {
+        for (PlayerSession player : players) {
+            player.setScore(0);
+            player.setHealth(100);
+            player.setTotalSolveTimeMs(0);
+            player.setRoundsWonFirst(0);
         }
     }
 }
