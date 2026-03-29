@@ -224,7 +224,24 @@ public class RoomService {
             roomRepository.save(room);
 
             gameEventPublisher.publishGameStarted(room.getRoomCode());
+
+            matchService.startRoundCountdown(matchState);
+            gameEventPublisher.publishRoundCountdownStarted(room.getRoomCode(), matchState.getCurrentRoundNumber());
         });
+    }
+
+    public void startRound(String roomCode) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            MatchState matchState = room.getMatchState();
+
+            matchService.activateRound(matchState);
+
+            roomRepository.save(room);
+            gameEventPublisher.publishRoundStarted(room.getRoomCode(),  matchState.getCurrentRoundNumber());
+        })
     }
 }
 

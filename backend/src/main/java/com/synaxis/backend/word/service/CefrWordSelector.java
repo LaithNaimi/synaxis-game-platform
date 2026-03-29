@@ -1,4 +1,4 @@
-package com.synaxis.backend.word;
+package com.synaxis.backend.word.service;
 
 import com.synaxis.backend.word.model.Word;
 import com.synaxis.backend.word.repository.WordRepository;

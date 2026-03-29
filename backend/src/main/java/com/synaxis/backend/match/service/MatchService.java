@@ -2,12 +2,11 @@ package com.synaxis.backend.match.service;
 
 import com.synaxis.backend.match.model.*;
 import com.synaxis.backend.room.model.Room;
-import com.synaxis.backend.word.CefrWordSelector;
+import com.synaxis.backend.word.service.CefrWordSelector;
 import com.synaxis.backend.word.model.Word;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +46,6 @@ public class MatchService {
         return matchState;
     }
 
-
     public RoundState createRoundState(MatchState matchState, int roundNumber) {
         if(roundNumber < 1 || roundNumber > matchState.getTotalRounds()) {
             throw new IllegalArgumentException("Invalid round number: " + roundNumber);
@@ -60,4 +58,14 @@ public class MatchService {
                 .status(RoundStatus.PREPARING)
                 .build();
     }
+
+    public void startRoundCountdown(MatchState matchState) {
+        matchState.getCurrentRound().startCountdown();
+    }
+
+    public void activateRound(MatchState matchState) {
+        matchState.getCurrentRound().activate();
+    }
+
+
 }

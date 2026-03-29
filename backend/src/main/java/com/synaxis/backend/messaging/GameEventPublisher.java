@@ -1,5 +1,6 @@
 package com.synaxis.backend.messaging;
 
+import com.synaxis.backend.messaging.dto.GenericGameEvent;
 import com.synaxis.backend.room.ws.event.GameStartedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -48,6 +49,26 @@ public class GameEventPublisher {
                 playerId,
                 TopicNames.userGameQueue(),
                 event
+        );
+    }
+
+    public void publishRoundCountdownStarted(String roomCode, int roundNumber) {
+        messagingTemplate.convertAndSend(
+                TopicNames.roomTopic(roomCode),
+                new GenericGameEvent(
+                        "ROUND_COUNTDOWN_STARTED",
+                        roundNumber
+                )
+        );
+    }
+
+    public void publishRoundStarted(String roomCode, int roundNumber) {
+        messagingTemplate.convertAndSend(
+                TopicNames.roomTopic(roomCode),
+                new GenericGameEvent(
+                        "ROUND_STARTED",
+                        roundNumber
+                )
         );
     }
 }
