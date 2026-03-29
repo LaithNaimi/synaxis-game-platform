@@ -24,7 +24,4 @@ public class MatchState {
 
     @Builder.Default
     private List<String> selectedWords = new ArrayList<>();
-
-    @Builder.Default
-    private Set<String> usedWords = new HashSet<>();
 }
