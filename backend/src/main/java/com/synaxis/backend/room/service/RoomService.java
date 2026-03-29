@@ -1,6 +1,7 @@
 package com.synaxis.backend.room.service;
 
 import com.synaxis.backend.common.exception.GameAlreadyStartedException;
+import com.synaxis.backend.common.exception.PlayerNotAuthorizedException;
 import com.synaxis.backend.common.exception.RoomFullException;
 import com.synaxis.backend.common.exception.RoomNotFoundException;
 import com.synaxis.backend.room.dto.*;
@@ -137,6 +138,32 @@ public class RoomService {
                     room.getStatus(),
                     players
             );
+        });
+    }
+
+    public void leaveRoom(String roomCode, LeaveRoomRequest request) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            PlayerSession player = room.findPlayerById(request.getPlayerId());
+
+            if(player == null || !player.getPlayerToken().equals(request.getPlayerToken())) {
+                throw new PlayerNotAuthorizedException();
+            }
+
+            boolean wasHost = player.isHost();
+            room.removePlayerById(request.getPlayerId());
+
+            if(room.isEmpty()){
+                roomRepository.deleteByCode(roomCode);
+                roomLockManager.removeLock(roomCode);
+                return;
+            }
+            if(wasHost){
+                room.assignHostToFirstPlayerIfNeeded();
+            }
+            roomRepository.save(room);
         });
     }
 }

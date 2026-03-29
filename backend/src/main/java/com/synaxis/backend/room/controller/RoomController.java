@@ -1,10 +1,7 @@
 package com.synaxis.backend.room.controller;
 
 import com.synaxis.backend.common.dto.ApiSuccessResponse;
-import com.synaxis.backend.room.dto.CreateRoomRequest;
-import com.synaxis.backend.room.dto.CreateRoomResponse;
-import com.synaxis.backend.room.dto.JoinRoomRequest;
-import com.synaxis.backend.room.dto.JoinRoomResponse;
+import com.synaxis.backend.room.dto.*;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.room.service.RoomService;
 import jakarta.validation.Valid;
@@ -29,5 +26,14 @@ public class RoomController {
             @Valid @RequestBody JoinRoomRequest request
     ) {
         return ResponseEntity.ok(ApiSuccessResponse.success(roomService.joinRoom(roomCode, request)));
+    }
+
+    @PostMapping("/{roomCode}/leave")
+    public ResponseEntity<?> leaveRoom(
+            @PathVariable String roomCode,
+            @Valid @RequestBody LeaveRoomRequest request
+    ){
+        roomService.leaveRoom(roomCode, request);
+        return ResponseEntity.noContent().build();
     }
 }

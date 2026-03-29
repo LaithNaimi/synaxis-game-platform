@@ -34,4 +34,37 @@ public class Room {
     public int playerCount(){
         return players.size();
     }
+
+    public PlayerSession findPlayerById(String playerId) {
+        return players.stream()
+                .filter(player -> player.getPlayerId().equals(playerId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void removePlayerById(String playerId) {
+        players.removeIf(player -> player.getPlayerId().equals(playerId));
+    }
+
+    public boolean isEmpty() {
+        return players.isEmpty();
+    }
+
+    public PlayerSession getHostPlayer() {
+        return players.stream()
+                .filter(PlayerSession::isHost)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void assignHostToFirstPlayerIfNeeded() {
+        if (players.isEmpty()) {
+            return;
+        }
+
+        boolean hasHost = players.stream().anyMatch(PlayerSession::isHost);
+        if (!hasHost) {
+            players.getFirst().setHost(true);
+        }
+    }
 }
