@@ -5,6 +5,8 @@ import com.synaxis.backend.common.exception.PlayerNotAuthorizedException;
 import com.synaxis.backend.common.exception.RoomFullException;
 import com.synaxis.backend.common.exception.RoomNotFoundException;
 import com.synaxis.backend.match.model.MatchState;
+import com.synaxis.backend.match.model.RoundState;
+import com.synaxis.backend.match.model.RoundStatus;
 import com.synaxis.backend.match.service.MatchService;
 import com.synaxis.backend.messaging.GameEventPublisher;
 import com.synaxis.backend.room.dto.*;
@@ -17,6 +19,7 @@ import com.synaxis.backend.room.ws.event.GameStartedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +33,10 @@ public class RoomService {
     private final GameEventPublisher gameEventPublisher;
     private static final int ROOM_CODE_LENGTH = 6;
     private static final int PLAYER_ID_LENGTH = 8;
+
+    public List<Room> getRooms() {
+        return roomRepository.findAll();
+    }
 
     public CreateRoomResponse createRoom(CreateRoomRequest request) {
         String roomCode = generateRoomCode();
@@ -237,11 +244,36 @@ public class RoomService {
 
             MatchState matchState = room.getMatchState();
 
-            matchService.activateRound(matchState);
+            matchService.activateRound(matchState, room.getSettings().getRoundDurationSeconds());
 
             roomRepository.save(room);
             gameEventPublisher.publishRoundStarted(room.getRoomCode(),  matchState.getCurrentRoundNumber());
-        })
+        });
+    }
+
+    public void timeoutCurrentRound(String roomCode) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room =  roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            MatchState matchState = room.getMatchState();
+            RoundState currentRound = matchState.getCurrentRound();
+
+            if(currentRound.getStatus() != RoundStatus.ACTIVE){
+                return;
+            }
+
+            if(!currentRound.isTimeout(Instant.now())){
+                return;
+            };
+
+            currentRound.showLearningReveal();
+
+            roomRepository.save(room);
+
+            gameEventPublisher.publishRoundTimeout(roomCode, currentRound.getRoundNumber());
+
+        });
     }
 }
 

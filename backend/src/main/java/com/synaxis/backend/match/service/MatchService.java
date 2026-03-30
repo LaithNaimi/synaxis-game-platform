@@ -6,6 +6,8 @@ import com.synaxis.backend.word.service.CefrWordSelector;
 import com.synaxis.backend.word.model.Word;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -63,8 +65,13 @@ public class MatchService {
         matchState.getCurrentRound().startCountdown();
     }
 
-    public void activateRound(MatchState matchState) {
-        matchState.getCurrentRound().activate();
+    public void activateRound(MatchState matchState, int roundDurationSeconds) {
+        RoundState roundState = matchState.getCurrentRound();
+
+        Instant startedAt = Instant.now();
+        Instant timeoutAt = startedAt.plusSeconds(roundDurationSeconds);
+
+        roundState.activate(startedAt, timeoutAt);
     }
 
 

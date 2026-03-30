@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,14 +19,18 @@ public class RoundState {
     private RoundWord roundWord;
     private RoundStatus status;
     private String firstSolverPlayerId;
+    private Instant startedAt;
+    private Instant timeoutAt;
 
     public void startCountdown() {
         requireStatus(RoundStatus.PREPARING);
         this.status = RoundStatus.COUNTDOWN;
     }
 
-    public void activate() {
+    public void activate(Instant startedAt, Instant timeoutAt) {
         requireStatus(RoundStatus.COUNTDOWN);
+        this.startedAt = startedAt;
+        this.timeoutAt = timeoutAt;
         this.status = RoundStatus.ACTIVE;
     }
 
@@ -51,6 +57,14 @@ public class RoundState {
         this.status = RoundStatus.COMPLETED;
     }
 
+    public boolean isTimeout(Instant now) {
+        return this.timeoutAt != null && now.isAfter(this.timeoutAt);
+
+    }
+
+    public boolean isAcceptingGuesses(){
+         return this.status == RoundStatus.ACTIVE;
+    }
     private void requireStatus(RoundStatus expected) {
         if (this.status != expected) {
             throw new IllegalStateException(

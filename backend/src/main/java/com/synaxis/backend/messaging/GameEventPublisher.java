@@ -2,6 +2,7 @@ package com.synaxis.backend.messaging;
 
 import com.synaxis.backend.messaging.dto.GenericGameEvent;
 import com.synaxis.backend.room.ws.event.GameStartedEvent;
+import com.synaxis.backend.room.ws.event.RoundTimeoutEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -70,5 +71,14 @@ public class GameEventPublisher {
                         roundNumber
                 )
         );
+    }
+
+    public void publishRoundTimeout(String roomCode, int roundNumber) {
+        RoundTimeoutEvent event = new RoundTimeoutEvent();
+        event.setType("ROUND_TIMEOUT");
+        event.setRoomCode(roomCode);
+        event.setRoundNumber(roundNumber);
+
+        publishRoundEvent(roomCode, event);
     }
 }
