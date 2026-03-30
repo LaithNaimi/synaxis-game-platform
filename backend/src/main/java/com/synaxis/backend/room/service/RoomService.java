@@ -275,5 +275,41 @@ public class RoomService {
 
         });
     }
+
+    public void proceedAfterRound(String roomCode) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            MatchState matchState = room.getMatchState();
+            RoundState currentRound = matchState.getCurrentRound();
+
+            if (currentRound.getStatus() != RoundStatus.COMPLETED) {
+                return;
+            }
+
+            if (matchState.hasNextRound()) {
+                matchService.advanceToNextRound(matchState);
+
+                matchService.startRoundCountdown(matchState);
+
+                roomRepository.save(room);
+
+                gameEventPublisher.publishRoundCountdownStarted(
+                        roomCode,
+                        matchState.getCurrentRoundNumber()
+                );
+
+            } else {
+                matchService.finishMatch(matchState);
+
+                room.setStatus(RoomStatus.FINISHED);
+
+                roomRepository.save(room);
+
+                gameEventPublisher.publishMatchFinished(roomCode);
+            }
+        });
+    }
 }
 

@@ -74,5 +74,20 @@ public class MatchService {
         roundState.activate(startedAt, timeoutAt);
     }
 
+    public void advanceToNextRound(MatchState matchState) {
+        if (!matchState.hasNextRound()) {
+            throw new IllegalStateException("No more rounds available");
+        }
 
+        int nextRoundNumber = matchState.getCurrentRoundNumber() + 1;
+
+        matchState.setCurrentRoundNumber(nextRoundNumber);
+        matchState.setCurrentRound(
+                createRoundState(matchState, nextRoundNumber)
+        );
+    }
+
+    public void finishMatch(MatchState matchState) {
+        matchState.setStatus(MatchStatus.FINISHED);
+    }
 }

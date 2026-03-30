@@ -25,4 +25,9 @@ public class MatchState {
 
     @Builder.Default
     private List<RoundWord> selectedWords = new ArrayList<>();
+
+    public boolean hasNextRound()
+    {
+        return currentRoundNumber < totalRounds;
+    }
 }
