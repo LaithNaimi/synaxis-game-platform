@@ -1,12 +1,12 @@
 package com.synaxis.backend.messaging;
 
 import com.synaxis.backend.messaging.dto.GenericGameEvent;
-import com.synaxis.backend.room.ws.event.GameStartedEvent;
-import com.synaxis.backend.room.ws.event.MatchFinishedEvent;
-import com.synaxis.backend.room.ws.event.RoundTimeoutEvent;
+import com.synaxis.backend.room.ws.event.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +87,42 @@ public class GameEventPublisher {
         MatchFinishedEvent event = new MatchFinishedEvent();
         event.setType("MATCH_FINISHED");
         event.setRoomCode(roomCode);
+
+        publishRoundEvent(roomCode, event);
+    }
+
+    public void publishLetterGuessResult(
+            String roomCode,
+            String playerId,
+            char letter,
+            boolean correct
+    ){
+        LetterGuessResultEvent event = new LetterGuessResultEvent();
+        event.setType("LETTER_GUESS_RESULT");
+        event.setRoomCode(roomCode);
+        event.setLetter(letter);
+        event.setCorrect(correct);
+
+        publishPrivatePlayerEvent(playerId, event);
+    }
+
+    public void publishPlayerRoundState(
+            String roomCode,
+            String playerId,
+            String maskedWord,
+            Set<Character> guessedLetters,
+            Set<Character> correctLetters,
+            Set<Character> wrongLetters,
+            boolean solved
+            ){
+        PlayerRoundStateEvent event = new PlayerRoundStateEvent();
+        event.setType("PLAYER_ROUND_STATE");
+        event.setRoomCode(roomCode);
+        event.setMaskedWord(maskedWord);
+        event.setGuessedLetters(guessedLetters);
+        event.setCorrectedLetters(correctLetters);
+        event.setWrongLetters(wrongLetters);
+        event.setSolved(solved);
 
         publishRoundEvent(roomCode, event);
     }

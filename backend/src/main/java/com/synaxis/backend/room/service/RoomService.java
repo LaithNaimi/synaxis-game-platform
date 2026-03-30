@@ -6,6 +6,7 @@ import com.synaxis.backend.common.exception.RoomFullException;
 import com.synaxis.backend.common.exception.RoomNotFoundException;
 import com.synaxis.backend.match.dto.GuessApplicationResult;
 import com.synaxis.backend.match.model.MatchState;
+import com.synaxis.backend.match.model.PlayerRoundProgress;
 import com.synaxis.backend.match.model.RoundState;
 import com.synaxis.backend.match.model.RoundStatus;
 import com.synaxis.backend.match.service.MatchService;
@@ -321,6 +322,27 @@ public class RoomService {
 
             GuessApplicationResult result = roundService.applyGuess(room, playerId, letter);
             roomRepository.save(room);
+
+            PlayerRoundProgress playerProgress = room.getMatchState()
+                    .getCurrentRound()
+                    .getPlayerProgress(playerId);
+
+            gameEventPublisher.publishLetterGuessResult(
+                    roomCode,
+                    playerId,
+                    result.getLetter(),
+                    result.isCorrect()
+            );
+
+            gameEventPublisher.publishPlayerRoundState(
+                    roomCode,
+                    playerId,
+                    playerProgress.getMaskedWord(),
+                    playerProgress.getGuessedLetters(),
+                    playerProgress.getCorrectLetters(),
+                    playerProgress.getWrongLetters(),
+                    playerProgress.isSolved()
+            );
             return result;
         });
     }
