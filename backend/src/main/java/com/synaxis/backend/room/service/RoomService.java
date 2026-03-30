@@ -4,6 +4,7 @@ import com.synaxis.backend.common.exception.GameAlreadyStartedException;
 import com.synaxis.backend.common.exception.PlayerNotAuthorizedException;
 import com.synaxis.backend.common.exception.RoomFullException;
 import com.synaxis.backend.common.exception.RoomNotFoundException;
+import com.synaxis.backend.match.dto.GuessApplicationResult;
 import com.synaxis.backend.match.model.MatchState;
 import com.synaxis.backend.match.model.RoundState;
 import com.synaxis.backend.match.model.RoundStatus;
@@ -16,7 +17,6 @@ import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.room.model.RoomSettings;
 import com.synaxis.backend.room.model.RoomStatus;
 import com.synaxis.backend.room.repository.RoomRepository;
-import com.synaxis.backend.room.ws.event.GameStartedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -314,14 +314,14 @@ public class RoomService {
         });
     }
 
-    public void handleGuess(String roomCode, String playerId, char letter) {
-        roomLockManager.executeWithRoomLock(roomCode, () -> {
+    public GuessApplicationResult handleGuess(String roomCode, String playerId, char letter) {
+        return roomLockManager.executeWithRoomLock(roomCode, () -> {
             Room room = roomRepository.findByCode(roomCode)
                     .orElseThrow(RoomNotFoundException::new);
 
-            roundService.validateGuess(room, playerId, letter);
-
-            // Task 8.2
+            GuessApplicationResult result = roundService.applyGuess(room, playerId, letter);
+            roomRepository.save(room);
+            return result;
         });
     }
 }

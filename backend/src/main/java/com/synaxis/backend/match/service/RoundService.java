@@ -4,8 +4,11 @@ import com.synaxis.backend.match.model.PlayerRoundProgress;
 import com.synaxis.backend.match.model.RoundState;
 import com.synaxis.backend.room.model.PlayerSession;
 import com.synaxis.backend.room.model.Room;
-import lombok.RequiredArgsConstructor;
+import com.synaxis.backend.match.dto.GuessApplicationResult;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.Set;
 
 @Service
 public class RoundService {
@@ -44,6 +47,64 @@ public class RoundService {
     }
 
     private boolean isEnglishLetter(char letter){
-        return letter >= 'A' && letter <= 'Z';
+        return letter >= 'a' && letter <= 'b';
+    }
+
+    public GuessApplicationResult applyGuess(Room room, String playerId, char rowLetter){
+        char letter = Character.toLowerCase(rowLetter);
+
+        PlayerRoundProgress playerProgress = validateGuess(room, playerId, letter);
+        RoundState round = room.getMatchState().getCurrentRound();
+        String word = round.getRoundWord().getWord().toLowerCase();
+
+        playerProgress.getGuessedLetters().add(letter);
+
+        boolean correct = word.indexOf(letter) >= 0;
+        if(correct) {
+            playerProgress.getCorrectLetters().add(letter);
+        }
+        else {
+            playerProgress.getWrongLetters().add(letter);
+        }
+
+        String maskedWord =  buildMaskedWord(word, playerProgress.getCorrectLetters());
+        playerProgress.setMaskedWord(maskedWord);
+
+        boolean solved = isSolved(word, playerProgress.getCorrectLetters());
+        if(solved && !playerProgress.isSolved()){
+            playerProgress.setSolved(true);
+            playerProgress.setSolvedAt(Instant.now());
+        }
+
+        return new GuessApplicationResult(
+                letter,
+                correct,
+                maskedWord,
+                playerProgress.isSolved()
+        );
+    }
+
+    private String buildMaskedWord(String word, Set<Character> correctLetters){
+        StringBuilder masked = new StringBuilder(word);
+
+        for(char currentLetter : word.toCharArray()){
+            if(correctLetters.contains(currentLetter)){
+                masked.append(currentLetter);
+            }
+            else {
+                masked.append(' ');
+            }
+            masked.append(' ');
+        }
+        return masked.toString().trim();
+    }
+
+    private boolean isSolved(String word, Set<Character> correctLetters){
+        for(char currentLetter : word.toCharArray()){
+            if(!correctLetters.contains(currentLetter)){
+                return false;
+            }
+        }
+        return true;
     }
 }
