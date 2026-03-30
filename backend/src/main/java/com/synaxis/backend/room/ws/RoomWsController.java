@@ -24,6 +24,18 @@ public class RoomWsController {
 
     @MessageMapping("/game.guess-letter")
     public void guessLetter(GuessLetterCommand command) {
-        commandValidationService.validatePlayerCommand(command);
+        AuthorizedPlayerContext context = commandValidationService.validatePlayerCommand(command);
+
+        if(command.getLetter() == null || command.getLetter().length() != 1){
+            throw new IllegalStateException("Guess must contain exactly one letter");
+        }
+
+        char letter = command.getLetter().charAt(0);
+        roomService.handleGuess(
+                context.getRoom().getRoomCode(),
+                context.getPlayer().getPlayerId(),
+                letter
+        );
     }
+
 }

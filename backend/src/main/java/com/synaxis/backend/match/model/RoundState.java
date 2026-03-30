@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -19,8 +21,16 @@ public class RoundState {
     private RoundWord roundWord;
     private RoundStatus status;
     private String firstSolverPlayerId;
+
+    @Builder.Default
+    private Map<String, PlayerRoundProgress> playerProgress = new HashMap<>();
     private Instant startedAt;
     private Instant timeoutAt;
+
+
+    public PlayerRoundProgress getPlayerProgress(String playerId) {
+        return playerProgress.get(playerId);
+    }
 
     public void startCountdown() {
         requireStatus(RoundStatus.PREPARING);
@@ -65,6 +75,7 @@ public class RoundState {
     public boolean isAcceptingGuesses(){
          return this.status == RoundStatus.ACTIVE;
     }
+
     private void requireStatus(RoundStatus expected) {
         if (this.status != expected) {
             throw new IllegalStateException(

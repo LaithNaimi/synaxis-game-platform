@@ -8,6 +8,7 @@ import com.synaxis.backend.match.model.MatchState;
 import com.synaxis.backend.match.model.RoundState;
 import com.synaxis.backend.match.model.RoundStatus;
 import com.synaxis.backend.match.service.MatchService;
+import com.synaxis.backend.match.service.RoundService;
 import com.synaxis.backend.messaging.GameEventPublisher;
 import com.synaxis.backend.room.dto.*;
 import com.synaxis.backend.room.model.PlayerSession;
@@ -33,6 +34,7 @@ public class RoomService {
     private final GameEventPublisher gameEventPublisher;
     private static final int ROOM_CODE_LENGTH = 6;
     private static final int PLAYER_ID_LENGTH = 8;
+    private final RoundService roundService;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -289,7 +291,7 @@ public class RoomService {
             }
 
             if (matchState.hasNextRound()) {
-                matchService.advanceToNextRound(matchState);
+                matchService.advanceToNextRound(matchState, room.getPlayers());
 
                 matchService.startRoundCountdown(matchState);
 
@@ -309,6 +311,17 @@ public class RoomService {
 
                 gameEventPublisher.publishMatchFinished(roomCode);
             }
+        });
+    }
+
+    public void handleGuess(String roomCode, String playerId, char letter) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            roundService.validateGuess(room, playerId, letter);
+
+            // Task 8.2
         });
     }
 }

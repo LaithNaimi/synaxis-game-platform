@@ -1,6 +1,7 @@
 package com.synaxis.backend.match.service;
 
 import com.synaxis.backend.match.model.*;
+import com.synaxis.backend.room.model.PlayerSession;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.word.service.CefrWordSelector;
 import com.synaxis.backend.word.model.Word;
@@ -8,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -43,22 +46,38 @@ public class MatchService {
                 )
                 .build();
 
-        matchState.setCurrentRound(createRoundState(matchState, 1));
+        matchState.setCurrentRound(
+                createRoundState(
+                        1,
+                        matchState.getSelectedWords().get(0),
+                        room.getPlayers()
+                ));
 
         return matchState;
     }
 
-    public RoundState createRoundState(MatchState matchState, int roundNumber) {
-        if(roundNumber < 1 || roundNumber > matchState.getTotalRounds()) {
-            throw new IllegalArgumentException("Invalid round number: " + roundNumber);
-        }
+    public RoundState createRoundState(int roundNumber, RoundWord roundWord, List<PlayerSession> players) {
+        Map<String, PlayerRoundProgress> playerProgressMap = new HashMap<>();
 
-        RoundWord roundWord = matchState.getSelectedWords().get(roundNumber - 1);
+        for (PlayerSession player : players) {
+            playerProgressMap.put(
+                    player.getPlayerId(),
+                    PlayerRoundProgress.builder()
+                            .maskedWord(buildInitialMaskedWord(roundWord.getWord().length()))
+                            .build()
+            );
+
+        }
         return RoundState.builder()
                 .roundNumber(roundNumber)
                 .roundWord(roundWord)
                 .status(RoundStatus.PREPARING)
+                .playerProgress(playerProgressMap)
                 .build();
+    }
+
+    private String buildInitialMaskedWord(int length) {
+        return "_ ".repeat(length).trim();
     }
 
     public void startRoundCountdown(MatchState matchState) {
@@ -74,16 +93,17 @@ public class MatchService {
         roundState.activate(startedAt, timeoutAt);
     }
 
-    public void advanceToNextRound(MatchState matchState) {
+    public void advanceToNextRound(MatchState matchState, List<PlayerSession> players) {
         if (!matchState.hasNextRound()) {
             throw new IllegalStateException("No more rounds available");
         }
 
         int nextRoundNumber = matchState.getCurrentRoundNumber() + 1;
+        RoundWord nextWord = matchState.getSelectedWords().get(nextRoundNumber - 1);
 
         matchState.setCurrentRoundNumber(nextRoundNumber);
         matchState.setCurrentRound(
-                createRoundState(matchState, nextRoundNumber)
+                createRoundState(nextRoundNumber,nextWord,players)
         );
     }
 
