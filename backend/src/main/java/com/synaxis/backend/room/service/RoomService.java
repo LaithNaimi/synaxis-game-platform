@@ -5,12 +5,12 @@ import com.synaxis.backend.common.exception.PlayerNotAuthorizedException;
 import com.synaxis.backend.common.exception.RoomFullException;
 import com.synaxis.backend.common.exception.RoomNotFoundException;
 import com.synaxis.backend.match.dto.GuessApplicationResult;
-import com.synaxis.backend.match.model.MatchState;
-import com.synaxis.backend.match.model.PlayerRoundProgress;
-import com.synaxis.backend.match.model.RoundState;
-import com.synaxis.backend.match.model.RoundStatus;
+import com.synaxis.backend.match.dto.ScoreBreakdown;
+import com.synaxis.backend.match.model.*;
+import com.synaxis.backend.match.service.LetterFrequencyClassifier;
 import com.synaxis.backend.match.service.MatchService;
 import com.synaxis.backend.match.service.RoundService;
+import com.synaxis.backend.match.service.ScoreCalculator;
 import com.synaxis.backend.messaging.GameEventPublisher;
 import com.synaxis.backend.room.dto.*;
 import com.synaxis.backend.room.model.PlayerSession;
@@ -29,13 +29,16 @@ import java.util.UUID;
 @Service
 public class RoomService {
 
+    private static final int ROOM_CODE_LENGTH = 6;
+    private static final int PLAYER_ID_LENGTH = 8;
+
     private final RoomRepository roomRepository;
     private final RoomLockManager roomLockManager;
     private final MatchService matchService;
     private final GameEventPublisher gameEventPublisher;
-    private static final int ROOM_CODE_LENGTH = 6;
-    private static final int PLAYER_ID_LENGTH = 8;
     private final RoundService roundService;
+    private final LetterFrequencyClassifier  letterFrequencyClassifier;
+    private final ScoreCalculator scoreCalculator;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -321,6 +324,32 @@ public class RoomService {
                     .orElseThrow(RoomNotFoundException::new);
 
             GuessApplicationResult result = roundService.applyGuess(room, playerId, letter);
+
+            PlayerSession player = room.findPlayerById(playerId);
+            if(player == null){
+                throw new IllegalStateException("Player not found after guess");
+            }
+
+            int scoreDelta = 0;
+
+            if(result.isCorrect()){
+                LetterFrequencyCategory category = letterFrequencyClassifier.classify(result.getLetter());
+
+                // falses need editing
+                ScoreBreakdown scoreBreakdown = scoreCalculator.calculateCorrectGuessScore(
+                        category,
+                        false,
+                        false,
+                        false
+                );
+
+                scoreDelta = scoreBreakdown.getTotalScore();
+                player.setScore(player.getScore() + scoreDelta);
+            }
+
+            result.setScoreDelta(scoreDelta);
+            result.setUpdatedTotalScore(player.getScore());
+
             roomRepository.save(room);
 
             PlayerRoundProgress playerProgress = room.getMatchState()
@@ -331,7 +360,8 @@ public class RoomService {
                     roomCode,
                     playerId,
                     result.getLetter(),
-                    result.isCorrect()
+                    result.isCorrect(),
+                    scoreDelta
             );
 
             gameEventPublisher.publishPlayerRoundState(
@@ -341,7 +371,9 @@ public class RoomService {
                     playerProgress.getGuessedLetters(),
                     playerProgress.getCorrectLetters(),
                     playerProgress.getWrongLetters(),
-                    playerProgress.isSolved()
+                    playerProgress.isSolved(),
+                    player.getScore(),
+                    result.getScoreDelta()
             );
             return result;
         });

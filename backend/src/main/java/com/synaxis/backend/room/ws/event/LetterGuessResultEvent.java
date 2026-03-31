@@ -8,4 +8,5 @@ import lombok.Setter;
 public class LetterGuessResultEvent extends BaseEvent{
     private char letter;
     private boolean correct;
+    private int scoreDelta;
 }

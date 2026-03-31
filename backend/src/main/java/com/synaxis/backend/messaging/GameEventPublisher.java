@@ -95,13 +95,15 @@ public class GameEventPublisher {
             String roomCode,
             String playerId,
             char letter,
-            boolean correct
+            boolean correct,
+            int scoreDelta
     ){
         LetterGuessResultEvent event = new LetterGuessResultEvent();
         event.setType("LETTER_GUESS_RESULT");
         event.setRoomCode(roomCode);
         event.setLetter(letter);
         event.setCorrect(correct);
+        event.setScoreDelta(scoreDelta);
 
         publishPrivatePlayerEvent(playerId, event);
     }
@@ -113,7 +115,9 @@ public class GameEventPublisher {
             Set<Character> guessedLetters,
             Set<Character> correctLetters,
             Set<Character> wrongLetters,
-            boolean solved
+            boolean solved,
+            int currentScore,
+            int scoreDelta
             ){
         PlayerRoundStateEvent event = new PlayerRoundStateEvent();
         event.setType("PLAYER_ROUND_STATE");
@@ -123,6 +127,8 @@ public class GameEventPublisher {
         event.setCorrectedLetters(correctLetters);
         event.setWrongLetters(wrongLetters);
         event.setSolved(solved);
+        event.setCurrentScore(currentScore);
+        event.setScoreDelta(scoreDelta);
 
         publishRoundEvent(roomCode, event);
     }

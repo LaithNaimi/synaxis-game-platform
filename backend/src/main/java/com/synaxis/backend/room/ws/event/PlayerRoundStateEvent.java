@@ -13,4 +13,6 @@ public class PlayerRoundStateEvent extends BaseEvent{
     private Set<Character> correctedLetters;
     private Set<Character> wrongLetters;
     private boolean solved;
+    private int currentScore;
+    private int scoreDelta;
 }
