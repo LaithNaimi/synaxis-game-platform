@@ -24,4 +24,7 @@ public class PlayerSession {
 
     private boolean stunned;
     private Instant stunnedUntil;
+
+    private PlayerStatus status;
+    private Instant reconnectDeadline;
 }

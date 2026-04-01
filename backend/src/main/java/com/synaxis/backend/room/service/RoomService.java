@@ -42,6 +42,7 @@ public class RoomService {
     private final StunManager stunManager;
     private final PenaltyManager penaltyManager;
     private final LeaderboardService leaderboardService;
+    private final DisconnectManager disconnectManager;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -477,6 +478,31 @@ public class RoomService {
             gameEventPublisher.publishRoundLeaderboard(roomCode,roundLeaderboard);
 
             proceedAfterRound(roomCode);
+        });
+    }
+
+    public void handleDisconnect(String roomCode, String playerId){
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            PlayerSession player = room.findPlayerById(playerId);
+            if(player == null){
+                return;
+            }
+
+            DisconnectResult disconnectResult = disconnectManager.markDisconnected(player);
+            if(!disconnectResult.isDisconnected()){
+                return;
+            }
+
+            roomRepository.save(room);
+
+            gameEventPublisher.publishPlayerDisconnected(
+                    roomCode,
+                    playerId,
+                    disconnectResult.getReconnectDeadline()
+            );
         });
     }
 

@@ -230,4 +230,15 @@ public class GameEventPublisher {
 
         publishPrivatePlayerEvent(roomCode, event);
     }
+
+    public void publishPlayerDisconnected(String roomCode, String playerId, Instant reconnectDeadline){
+        PlayerDisconnectedEvent event = new PlayerDisconnectedEvent();
+        event.setType("PLAYER_DISCONNECTED");
+        event.setRoomCode(roomCode);
+        event.setPlayerId(playerId);
+        event.setReconnectDeadline(reconnectDeadline);
+
+        publishPrivatePlayerEvent(playerId, event);
+
+    }
 }
