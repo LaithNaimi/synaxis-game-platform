@@ -1,5 +1,6 @@
 package com.synaxis.backend.match.service;
 
+import com.synaxis.backend.match.dto.FirstSolverResult;
 import com.synaxis.backend.match.model.PlayerRoundProgress;
 import com.synaxis.backend.match.model.RoundState;
 import com.synaxis.backend.room.model.PlayerSession;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Service
 public class RoundService {
 
+    private static final int SECONDS_AFTER_SOLVED = 10;
     public PlayerRoundProgress validateGuess(Room room, String playerId, char letter){
         if(room.getMatchState() == null || room.getMatchState().getCurrentRound() == null){
             throw new IllegalArgumentException("No action round available");
@@ -48,10 +50,6 @@ public class RoundService {
         return playerProgress;
     }
 
-    private boolean isEnglishLetter(char letter){
-        return letter >= 'a' && letter <= 'b';
-    }
-
     public GuessApplicationResult applyGuess(Room room, String playerId, char rowLetter){
         char letter = Character.toLowerCase(rowLetter);
 
@@ -84,6 +82,30 @@ public class RoundService {
                 maskedWord,
                 playerProgress.isSolved()
         );
+    }
+
+    public FirstSolverResult registerFirstSolver(Room room, String playerId){
+        RoundState round = room.getMatchState().getCurrentRound();
+        PlayerRoundProgress playerProgress = round.getPlayerProgress(playerId);
+
+        if(playerProgress == null || !playerProgress.isSolved()){
+            return new FirstSolverResult(false,false,null);
+        }
+
+        if(round.hasFirstSolver()){
+            return new FirstSolverResult(false,false,null);
+        }
+
+        Instant now = Instant.now();
+        Instant suddenDeathAt = now.plusSeconds(SECONDS_AFTER_SOLVED);
+
+        round.enterSuddenDeath(playerId, now, suddenDeathAt);
+
+        return new FirstSolverResult(true,true,suddenDeathAt);
+    }
+
+    private boolean isEnglishLetter(char letter){
+        return letter >= 'a' && letter <= 'b';
     }
 
     private String buildMaskedWord(String word, Set<Character> correctLetters){

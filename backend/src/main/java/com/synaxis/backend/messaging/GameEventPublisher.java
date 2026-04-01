@@ -160,4 +160,25 @@ public class GameEventPublisher {
 
         publishPrivatePlayerEvent(playerId, event);
     }
+
+    public void publishPlayerSolvedWord(String roomCode, String playerId, int roundNumber){
+        PlayerSolverWordEvent event = new PlayerSolverWordEvent();
+        event.setType("PLAYER_SOLVED_WORD");
+        event.setRoomCode(roomCode);
+        event.setPlayerId(playerId);
+        event.setRoundNumber(roundNumber);
+
+        publishPrivatePlayerEvent(playerId, event);
+    }
+
+    public void publishSuddenDeathStarted(String roomCode, String firstSolverPlayerId, int roundNumber, Instant suddenDeathAt){
+        SuddenDeathStartedEvent event = new SuddenDeathStartedEvent();
+        event.setType("SUDDEN_DEATH_STARTED");
+        event.setRoomCode(roomCode);
+        event.setRoundNumber(roundNumber);
+        event.setFirstSolverPlayerId(firstSolverPlayerId);
+        event.setSuddenDeathAt(suddenDeathAt);
+
+        publishPrivatePlayerEvent(firstSolverPlayerId, event);
+    }
 }

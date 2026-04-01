@@ -27,6 +27,8 @@ public class RoomService {
 
     private static final int ROOM_CODE_LENGTH = 6;
     private static final int PLAYER_ID_LENGTH = 8;
+    private static final int FULL_HEALTH = 100;
+    private static final int FIRST_SOLVER_BONUS = 150;
 
     private final RoomRepository roomRepository;
     private final RoomLockManager roomLockManager;
@@ -87,30 +89,6 @@ public class RoomService {
                         )
                 )
         );
-    }
-
-    private String generateRoomCode() {
-        String code;
-        do {
-            code = UUID.randomUUID()
-                    .toString()
-                    .replace("-", "")
-                    .substring(0, ROOM_CODE_LENGTH)
-                    .toUpperCase();
-        } while (roomRepository.existsByCode(code));
-        return code;
-    }
-
-    private String generatePlayerId() {
-        return "p_" + UUID.randomUUID()
-                    .toString()
-                    .replace("-", "")
-                    .substring(0, PLAYER_ID_LENGTH)
-                    .toUpperCase();
-    }
-
-    private String generatePlayerToken() {
-        return UUID.randomUUID().toString();
     }
 
     public JoinRoomResponse joinRoom(String roomCode, JoinRoomRequest request) {
@@ -379,6 +357,16 @@ public class RoomService {
                     stunned
             );
 
+            FirstSolverResult firstSolverResult = new FirstSolverResult(false, false, null);
+            if(applyResult.isSolved()){
+                firstSolverResult = roundService.registerFirstSolver(room, playerId);
+
+                if (firstSolverResult.isFirstSolver()){
+                    player.setScore(player.getScore() + FIRST_SOLVER_BONUS);
+                    player.setHealth(FULL_HEALTH);
+                }
+            }
+
             roomRepository.save(room);
 
             PlayerRoundProgress playerProgress = room.getMatchState()
@@ -409,7 +397,7 @@ public class RoomService {
                     guessResult.isStunned()
             );
 
-            if(!applyResult.isCorrect() && player.isStunned()){
+            if(!applyResult.isCorrect() && guessResult.isStunned()){
                 gameEventPublisher.publishPlayerStunned(
                         roomCode,
                         playerId,
@@ -417,6 +405,22 @@ public class RoomService {
                 );
             }
 
+            if(applyResult.isSolved()){
+                gameEventPublisher.publishPlayerSolvedWord(
+                        roomCode,
+                        playerId,
+                        room.getMatchState().getCurrentRoundNumber()
+                );
+            }
+
+            if(firstSolverResult.isSuddenDeathStarted()){
+                gameEventPublisher.publishSuddenDeathStarted(
+                        roomCode,
+                        playerId,
+                        room.getMatchState().getCurrentRoundNumber(),
+                        firstSolverResult.getSuddenDeathAt()
+                );
+            }
             return guessResult;
         });
     }
@@ -445,5 +449,30 @@ public class RoomService {
             );
         });
     }
+
+    private String generateRoomCode() {
+        String code;
+        do {
+            code = UUID.randomUUID()
+                    .toString()
+                    .replace("-", "")
+                    .substring(0, ROOM_CODE_LENGTH)
+                    .toUpperCase();
+        } while (roomRepository.existsByCode(code));
+        return code;
+    }
+
+    private String generatePlayerId() {
+        return "p_" + UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, PLAYER_ID_LENGTH)
+                .toUpperCase();
+    }
+
+    private String generatePlayerToken() {
+        return UUID.randomUUID().toString();
+    }
+
 }
 

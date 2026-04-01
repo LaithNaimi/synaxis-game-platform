@@ -21,6 +21,8 @@ public class RoundState {
     private RoundWord roundWord;
     private RoundStatus status;
     private String firstSolverPlayerId;
+    private Instant firstSolvedAt;
+    private Instant suddenDeathAt;
 
     @Builder.Default
     private Map<String, PlayerRoundProgress> playerProgress = new HashMap<>();
@@ -44,9 +46,11 @@ public class RoundState {
         this.status = RoundStatus.ACTIVE;
     }
 
-    public void enterSuddenDeath(String firstSolverPlayerId) {
+    public void enterSuddenDeath(String firstSolverPlayerId, Instant firstSolvedAt,  Instant suddenDeathAt) {
         requireStatus(RoundStatus.ACTIVE);
         this.firstSolverPlayerId = firstSolverPlayerId;
+        this.firstSolvedAt = firstSolvedAt;
+        this.suddenDeathAt = suddenDeathAt;
         this.status = RoundStatus.SUDDEN_DEATH;
     }
 
@@ -82,5 +86,13 @@ public class RoundState {
                     "Invalid round state transition. Expected: " + expected + ", but was: " + this.status
             );
         }
+    }
+
+    public boolean hasFirstSolver(){
+        return this.firstSolverPlayerId != null;
+    }
+
+    public boolean isInSuddenDeath(){
+        return this.status == RoundStatus.SUDDEN_DEATH;
     }
 }
