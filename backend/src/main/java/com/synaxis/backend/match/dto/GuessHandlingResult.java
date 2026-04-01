@@ -11,8 +11,13 @@ public class GuessHandlingResult {
     private final boolean correct;
     private final String maskedWord;
     private final boolean solved;
+
     private final int scoreDelta;
     private final int updatedTotalScore;
+
     private final int healthDelta;
     private final int updatedHealth;
+
+    private final int penaltyScoreDelta;
+    private final boolean stunned;
 }

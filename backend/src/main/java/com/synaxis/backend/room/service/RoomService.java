@@ -37,6 +37,7 @@ public class RoomService {
     private final ScoreCalculator scoreCalculator;
     private final HealthManager  healthManager;
     private final StunManager stunManager;
+    private final PenaltyManager penaltyManager;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -330,6 +331,8 @@ public class RoomService {
 
             int scoreDelta = 0;
             int healthDelta = 0;
+            int penaltyScoreDelta = 0;
+            boolean stunned = false;
 
             if(applyResult.isCorrect()){
                 LetterFrequencyCategory category = letterFrequencyClassifier.classify(applyResult.getLetter());
@@ -353,6 +356,14 @@ public class RoomService {
                 player.setHealth(healthUpdateResult.getUpdatedHealth());
 
                 StunTriggerResult stunTriggerResult = stunManager.triggerStun(player);
+
+                if(stunTriggerResult.isStunned() && player.isStunned()){
+                    PenaltyApplicationResult penaltyResult = penaltyManager.applyStunPenalty(player.getScore());
+
+                    penaltyScoreDelta = -1 * penaltyResult.getPenaltyAmount();
+                    player.setScore(penaltyResult.getUpdatedScore());
+                    stunned = true;
+                }
             }
 
             GuessHandlingResult guessResult = new GuessHandlingResult(
@@ -363,7 +374,9 @@ public class RoomService {
                     scoreDelta,
                     player.getScore(),
                     healthDelta,
-                    player.getHealth()
+                    player.getHealth(),
+                    penaltyScoreDelta,
+                    stunned
             );
 
             roomRepository.save(room);
@@ -372,13 +385,6 @@ public class RoomService {
                     .getCurrentRound()
                     .getPlayerProgress(playerId);
 
-            if(!applyResult.isCorrect() && player.isStunned()){
-                gameEventPublisher.publishPlayerStunned(
-                        roomCode,
-                        playerId,
-                        player.getStunnedUntil()
-                );
-            }
             gameEventPublisher.publishLetterGuessResult(
                     roomCode,
                     playerId,
@@ -398,8 +404,19 @@ public class RoomService {
                     player.getScore(),
                     guessResult.getScoreDelta(),
                     player.getHealth(),
-                    guessResult.getHealthDelta()
+                    guessResult.getHealthDelta(),
+                    guessResult.getPenaltyScoreDelta(),
+                    guessResult.isStunned()
             );
+
+            if(!applyResult.isCorrect() && player.isStunned()){
+                gameEventPublisher.publishPlayerStunned(
+                        roomCode,
+                        playerId,
+                        player.getStunnedUntil()
+                );
+            }
+
             return guessResult;
         });
     }

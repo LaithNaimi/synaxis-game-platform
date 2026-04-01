@@ -120,8 +120,9 @@ public class GameEventPublisher {
             int currentScore,
             int scoreDelta,
             int currentHealth,
-            int healthDelta
-            ){
+            int healthDelta,
+            int penaltyScoreDelta,
+            boolean stunned){
         PlayerRoundStateEvent event = new PlayerRoundStateEvent();
         event.setType("PLAYER_ROUND_STATE");
         event.setRoomCode(roomCode);
@@ -134,6 +135,8 @@ public class GameEventPublisher {
         event.setScoreDelta(scoreDelta);
         event.setCurrentHealth(currentHealth);
         event.setHealthDelta(healthDelta);
+        event.setPenaltyScoreDelta(penaltyScoreDelta);
+        event.setStunned(stunned);
 
         publishRoundEvent(roomCode, event);
     }
