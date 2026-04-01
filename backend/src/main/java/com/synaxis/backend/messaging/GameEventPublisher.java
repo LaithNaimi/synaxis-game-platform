@@ -117,7 +117,9 @@ public class GameEventPublisher {
             Set<Character> wrongLetters,
             boolean solved,
             int currentScore,
-            int scoreDelta
+            int scoreDelta,
+            int currentHealth,
+            int healthDelta
             ){
         PlayerRoundStateEvent event = new PlayerRoundStateEvent();
         event.setType("PLAYER_ROUND_STATE");
@@ -129,6 +131,8 @@ public class GameEventPublisher {
         event.setSolved(solved);
         event.setCurrentScore(currentScore);
         event.setScoreDelta(scoreDelta);
+        event.setCurrentHealth(currentHealth);
+        event.setHealthDelta(healthDelta);
 
         publishRoundEvent(roomCode, event);
     }

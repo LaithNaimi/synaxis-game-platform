@@ -15,4 +15,6 @@ public class PlayerRoundStateEvent extends BaseEvent{
     private boolean solved;
     private int currentScore;
     private int scoreDelta;
+    private int currentHealth;
+    private int healthDelta;
 }

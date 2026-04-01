@@ -5,12 +5,11 @@ import com.synaxis.backend.common.exception.PlayerNotAuthorizedException;
 import com.synaxis.backend.common.exception.RoomFullException;
 import com.synaxis.backend.common.exception.RoomNotFoundException;
 import com.synaxis.backend.match.dto.GuessApplicationResult;
+import com.synaxis.backend.match.dto.GuessHandlingResult;
+import com.synaxis.backend.match.dto.HealthUpdateResult;
 import com.synaxis.backend.match.dto.ScoreBreakdown;
 import com.synaxis.backend.match.model.*;
-import com.synaxis.backend.match.service.LetterFrequencyClassifier;
-import com.synaxis.backend.match.service.MatchService;
-import com.synaxis.backend.match.service.RoundService;
-import com.synaxis.backend.match.service.ScoreCalculator;
+import com.synaxis.backend.match.service.*;
 import com.synaxis.backend.messaging.GameEventPublisher;
 import com.synaxis.backend.room.dto.*;
 import com.synaxis.backend.room.model.PlayerSession;
@@ -39,6 +38,7 @@ public class RoomService {
     private final RoundService roundService;
     private final LetterFrequencyClassifier  letterFrequencyClassifier;
     private final ScoreCalculator scoreCalculator;
+    private final HealthManager  healthManager;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -318,12 +318,12 @@ public class RoomService {
         });
     }
 
-    public GuessApplicationResult handleGuess(String roomCode, String playerId, char letter) {
+    public GuessHandlingResult handleGuess(String roomCode, String playerId, char letter) {
         return roomLockManager.executeWithRoomLock(roomCode, () -> {
             Room room = roomRepository.findByCode(roomCode)
                     .orElseThrow(RoomNotFoundException::new);
 
-            GuessApplicationResult result = roundService.applyGuess(room, playerId, letter);
+            GuessApplicationResult applyResult = roundService.applyGuess(room, playerId, letter);
 
             PlayerSession player = room.findPlayerById(playerId);
             if(player == null){
@@ -331,11 +331,12 @@ public class RoomService {
             }
 
             int scoreDelta = 0;
+            int healthDelta = 0;
 
-            if(result.isCorrect()){
-                LetterFrequencyCategory category = letterFrequencyClassifier.classify(result.getLetter());
+            if(applyResult.isCorrect()){
+                LetterFrequencyCategory category = letterFrequencyClassifier.classify(applyResult.getLetter());
 
-                // falses need editing
+                // speed bound, first finisher, sudden death will be integrated later
                 ScoreBreakdown scoreBreakdown = scoreCalculator.calculateCorrectGuessScore(
                         category,
                         false,
@@ -346,9 +347,25 @@ public class RoomService {
                 scoreDelta = scoreBreakdown.getTotalScore();
                 player.setScore(player.getScore() + scoreDelta);
             }
+            else {
+                HealthUpdateResult healthUpdateResult = healthManager.applyWrongGuessDamage(
+                        player.getHealth(), applyResult.getLetter()
+                );
+                healthDelta =  healthUpdateResult.getHealthDelta();
+                player.setHealth(healthUpdateResult.getUpdatedHealth());
 
-            result.setScoreDelta(scoreDelta);
-            result.setUpdatedTotalScore(player.getScore());
+            }
+
+            GuessHandlingResult guessResult = new GuessHandlingResult(
+                    applyResult.getLetter(),
+                    applyResult.isCorrect(),
+                    applyResult.getMaskedWord(),
+                    applyResult.isSolved(),
+                    scoreDelta,
+                    player.getScore(),
+                    healthDelta,
+                    player.getHealth()
+            );
 
             roomRepository.save(room);
 
@@ -359,9 +376,9 @@ public class RoomService {
             gameEventPublisher.publishLetterGuessResult(
                     roomCode,
                     playerId,
-                    result.getLetter(),
-                    result.isCorrect(),
-                    scoreDelta
+                    guessResult.getLetter(),
+                    guessResult.isCorrect(),
+                    guessResult.getScoreDelta()
             );
 
             gameEventPublisher.publishPlayerRoundState(
@@ -373,9 +390,11 @@ public class RoomService {
                     playerProgress.getWrongLetters(),
                     playerProgress.isSolved(),
                     player.getScore(),
-                    result.getScoreDelta()
+                    guessResult.getScoreDelta(),
+                    player.getHealth(),
+                    guessResult.getHealthDelta()
             );
-            return result;
+            return guessResult;
         });
     }
 }
