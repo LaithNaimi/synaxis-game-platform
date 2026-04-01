@@ -29,6 +29,7 @@ public class RoomService {
     private static final int PLAYER_ID_LENGTH = 8;
     private static final int FULL_HEALTH = 100;
     private static final int FIRST_SOLVER_BONUS = 150;
+    private static final int SOLVED_DURING_SUDDEN_DEATH_BONUS = 20;
 
     private final RoomRepository roomRepository;
     private final RoomLockManager roomLockManager;
@@ -367,11 +368,21 @@ public class RoomService {
                 }
             }
 
+            boolean solvedDuringSuddenDeath = false;
+            RoundState currentRound = room.getMatchState().getCurrentRound();
+
+            if(applyResult.isSolved() && currentRound.isInSuddenDeath() && !currentRound.isFirstSolver(playerId)){
+                int updatedHealth = Math.min(FULL_HEALTH, player.getHealth() + SOLVED_DURING_SUDDEN_DEATH_BONUS);
+                healthDelta += (updatedHealth - player.getHealth());
+                player.setHealth(updatedHealth);
+
+                solvedDuringSuddenDeath = true;
+            }
+
             roomRepository.save(room);
 
-            PlayerRoundProgress playerProgress = room.getMatchState()
-                    .getCurrentRound()
-                    .getPlayerProgress(playerId);
+
+            PlayerRoundProgress playerProgress = currentRound.getPlayerProgress(playerId);
 
             gameEventPublisher.publishLetterGuessResult(
                     roomCode,
@@ -421,6 +432,14 @@ public class RoomService {
                         firstSolverResult.getSuddenDeathAt()
                 );
             }
+
+            if(solvedDuringSuddenDeath){
+                gameEventPublisher.publishPlayerSolvedDuringSuddenDeath(
+                        roomCode,
+                        playerId,
+                        room.getMatchState().getCurrentRoundNumber()
+                );
+            }
             return guessResult;
         });
     }
@@ -450,6 +469,31 @@ public class RoomService {
         });
     }
 
+    public void endSuddenDeathIfNeed(String roomCode, Instant now) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            if(room.getMatchState() == null || room.getMatchState().getCurrentRound() == null){
+                return;
+            }
+
+            RoundState round = room.getMatchState().getCurrentRound();
+
+            if(!round.isSuddenDeathExpired(now)){
+                return;
+            }
+
+            round.showLearningReveal();
+
+            roomRepository.save(room);
+
+            gameEventPublisher.publishSuddenDeathEnded(
+                    roomCode,
+                    round.getRoundNumber()
+            );
+        });
+    }
     private String generateRoomCode() {
         String code;
         do {

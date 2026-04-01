@@ -181,4 +181,23 @@ public class GameEventPublisher {
 
         publishPrivatePlayerEvent(firstSolverPlayerId, event);
     }
+
+    public void publishPlayerSolvedDuringSuddenDeath(String roomCode, String playerId, int roundNumber){
+        PlayerSolvedDuringSuddenDeathEvent event = new PlayerSolvedDuringSuddenDeathEvent();
+        event.setType("PLAYER_SOLVED_DURING_SUDDEN_DEATH");
+        event.setRoomCode(roomCode);
+        event.setPlayerId(playerId);
+        event.setRoundNumber(roundNumber);
+
+        publishPrivatePlayerEvent(playerId, event);
+    }
+
+    public void publishSuddenDeathEnded(String roomCode, int roundNumber){
+        SuddenDeathEndedEvent event = new SuddenDeathEndedEvent();
+        event.setType("SUDDEN_DEATH_ENDED");
+        event.setRoomCode(roomCode);
+        event.setRoundNumber(roundNumber);
+
+        publishPrivatePlayerEvent(roomCode, event);
+    }
 }

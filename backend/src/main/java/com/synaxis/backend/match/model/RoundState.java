@@ -95,4 +95,14 @@ public class RoundState {
     public boolean isInSuddenDeath(){
         return this.status == RoundStatus.SUDDEN_DEATH;
     }
+
+    public boolean isSuddenDeathExpired(Instant now){
+        return this.status == RoundStatus.SUDDEN_DEATH
+                && this.suddenDeathAt != null
+                && !now.isBefore(this.suddenDeathAt);
+    }
+
+    public boolean isFirstSolver(String playerId){
+        return  this.firstSolverPlayerId != null && this.firstSolverPlayerId.equals(playerId);
+    }
 }
