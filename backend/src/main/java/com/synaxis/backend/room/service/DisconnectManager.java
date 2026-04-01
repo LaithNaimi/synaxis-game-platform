@@ -1,6 +1,7 @@
 package com.synaxis.backend.room.service;
 
 import com.synaxis.backend.room.dto.DisconnectResult;
+import com.synaxis.backend.room.dto.ReconnectExpiryResult;
 import com.synaxis.backend.room.model.PlayerSession;
 import com.synaxis.backend.room.model.PlayerStatus;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,17 @@ public class DisconnectManager {
         player.setReconnectDeadline(reconnectDeadline);
 
         return new DisconnectResult(true, reconnectDeadline);
+    }
+
+    public ReconnectExpiryResult isReconnectExpired(PlayerSession player, Instant now) {
+        if(player.getStatus() != PlayerStatus.OFFLINE_TEMP) {
+            return new ReconnectExpiryResult(false);
+        }
+        if(player.getReconnectDeadline() == null) {
+            return new ReconnectExpiryResult(true);
+        }
+
+        return new ReconnectExpiryResult(!now.isBefore(player.getReconnectDeadline()));
     }
 }
 

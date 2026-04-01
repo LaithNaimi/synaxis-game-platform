@@ -545,6 +545,61 @@ public class RoomService {
         });
     }
 
+    public void removeExpiredDisconnectedPlayer(String roomCode, String playerId, java.time.Instant now) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            PlayerSession player = room.findPlayerById(playerId);
+            if (player == null) {
+                return;
+            }
+
+            ReconnectExpiryResult expiryResult = disconnectManager.isReconnectExpired(player, now);
+            if (!expiryResult.isExpired()) {
+                return;
+            }
+
+            boolean wasHost = player.isHost();
+            String previousHostId = player.getPlayerId();
+
+            room.removePlayerById(playerId);
+
+            if (room.isEmpty()) {
+                roomRepository.deleteByCode(roomCode);
+                roomLockManager.removeLock(roomCode);
+                return;
+            }
+
+            String newHostPlayerId = null;
+
+            if (wasHost) {
+                room.assignHostToFirstPlayerIfNeeded();
+
+                PlayerSession newHost = room.getPlayers().stream()
+                        .filter(PlayerSession::isHost)
+                        .findFirst()
+                        .orElse(null);
+
+                if (newHost != null) {
+                    newHostPlayerId = newHost.getPlayerId();
+                }
+            }
+
+            roomRepository.save(room);
+
+            gameEventPublisher.publishPlayerRemovedAfterDisconnect(roomCode, playerId);
+
+            if (wasHost && newHostPlayerId != null) {
+                gameEventPublisher.publishHostTransferred(
+                        roomCode,
+                        previousHostId,
+                        newHostPlayerId
+                );
+            }
+        });
+    }
+
     private String generateRoomCode() {
         String code;
         do {

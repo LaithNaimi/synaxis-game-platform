@@ -239,6 +239,24 @@ public class GameEventPublisher {
         event.setReconnectDeadline(reconnectDeadline);
 
         publishPrivatePlayerEvent(playerId, event);
+    }
 
+    public void publishPlayerRemovedAfterDisconnect(String roomCode, String playerId){
+        PlayerRemovedAfterDisconnectEvent event = new PlayerRemovedAfterDisconnectEvent();
+        event.setType("PLAYER_REMOVED_AFTER_DISCONNECT");
+        event.setRoomCode(roomCode);
+        event.setPlayerId(playerId);
+
+        publishPrivatePlayerEvent(playerId, event);
+    }
+
+    public void publishHostTransferred(String roonCode, String previousHostPlayerId, String newHostPlayerId){
+        HostTransferredEvent event = new HostTransferredEvent();
+        event.setType("HOST_TRANSFERRED");
+        event.setRoomCode(roonCode);
+        event.setPreviousHostPlayerId(previousHostPlayerId);
+        event.setNewHostPlayerId(newHostPlayerId);
+
+        publishPrivatePlayerEvent(previousHostPlayerId, event);
     }
 }
