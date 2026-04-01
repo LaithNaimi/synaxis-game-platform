@@ -4,10 +4,7 @@ import com.synaxis.backend.common.exception.GameAlreadyStartedException;
 import com.synaxis.backend.common.exception.PlayerNotAuthorizedException;
 import com.synaxis.backend.common.exception.RoomFullException;
 import com.synaxis.backend.common.exception.RoomNotFoundException;
-import com.synaxis.backend.match.dto.GuessApplicationResult;
-import com.synaxis.backend.match.dto.GuessHandlingResult;
-import com.synaxis.backend.match.dto.HealthUpdateResult;
-import com.synaxis.backend.match.dto.ScoreBreakdown;
+import com.synaxis.backend.match.dto.*;
 import com.synaxis.backend.match.model.*;
 import com.synaxis.backend.match.service.*;
 import com.synaxis.backend.messaging.GameEventPublisher;
@@ -39,6 +36,7 @@ public class RoomService {
     private final LetterFrequencyClassifier  letterFrequencyClassifier;
     private final ScoreCalculator scoreCalculator;
     private final HealthManager  healthManager;
+    private final StunManager stunManager;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -354,6 +352,7 @@ public class RoomService {
                 healthDelta =  healthUpdateResult.getHealthDelta();
                 player.setHealth(healthUpdateResult.getUpdatedHealth());
 
+                StunTriggerResult stunTriggerResult = stunManager.triggerStun(player);
             }
 
             GuessHandlingResult guessResult = new GuessHandlingResult(
@@ -373,6 +372,13 @@ public class RoomService {
                     .getCurrentRound()
                     .getPlayerProgress(playerId);
 
+            if(!applyResult.isCorrect() && player.isStunned()){
+                gameEventPublisher.publishPlayerStunned(
+                        roomCode,
+                        playerId,
+                        player.getStunnedUntil()
+                );
+            }
             gameEventPublisher.publishLetterGuessResult(
                     roomCode,
                     playerId,
@@ -395,6 +401,31 @@ public class RoomService {
                     guessResult.getHealthDelta()
             );
             return guessResult;
+        });
+    }
+
+    public void recoverPlayer(String roomCode, String playerId, Instant now) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            PlayerSession player = room.findPlayerById(playerId);
+            if(player == null){
+                throw new PlayerNotAuthorizedException();
+            }
+
+            if(!stunManager.canRecover(player, now)){
+                return;
+            }
+
+            stunManager.recover(player);
+            roomRepository.save(room);
+
+            gameEventPublisher.publishPlayerRecovered(
+                    roomCode,
+                    playerId,
+                    player.getHealth()
+            );
         });
     }
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Set;
 
 @Service
@@ -135,5 +136,25 @@ public class GameEventPublisher {
         event.setHealthDelta(healthDelta);
 
         publishRoundEvent(roomCode, event);
+    }
+
+    public void publishPlayerStunned(String roomCode, String playerId, Instant stunnedUntil){
+        PlayerStunnedEvent event = new PlayerStunnedEvent();
+        event.setType("PLAYER_STUNNED");
+        event.setRoomCode(roomCode);
+        event.setPlayerId(playerId);
+        event.setStunnedUntil(stunnedUntil);
+
+        publishPrivatePlayerEvent(playerId, event);
+    }
+
+    public void publishPlayerRecovered(String roomCode, String playerId, int recoveredHealth){
+        PlayerRecoveredEvent event = new PlayerRecoveredEvent();
+        event.setType("PLAYER_RECOVERED");
+        event.setRoomCode(roomCode);
+        event.setPlayerId(playerId);
+        event.setRestoredHealth(recoveredHealth);
+
+        publishPrivatePlayerEvent(playerId, event);
     }
 }

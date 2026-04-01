@@ -2,6 +2,8 @@ package com.synaxis.backend.room.model;
 
 import lombok.*;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,4 +21,7 @@ public class PlayerSession {
     private int health;
     private long totalSolveTimeMs;
     private int roundsWonFirst;
+
+    private boolean stunned;
+    private Instant stunnedUntil;
 }

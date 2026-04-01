@@ -33,7 +33,9 @@ public class RoundService {
         if(!isEnglishLetter(letter)){
             throw new IllegalArgumentException("Guess must be english letter");
         }
-
+        if(player.isStunned()){
+            throw new IllegalArgumentException("Player is stunned");
+        }
 
         PlayerRoundProgress playerProgress = round.getPlayerProgress(playerId);
         if(playerProgress == null){
