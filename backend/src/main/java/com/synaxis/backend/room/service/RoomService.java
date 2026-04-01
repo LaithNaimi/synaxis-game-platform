@@ -236,78 +236,6 @@ public class RoomService {
         });
     }
 
-    public void timeoutCurrentRound(String roomCode) {
-        roomLockManager.executeWithRoomLock(roomCode, () -> {
-            Room room =  roomRepository.findByCode(roomCode)
-                    .orElseThrow(RoomNotFoundException::new);
-
-            MatchState matchState = room.getMatchState();
-            RoundState currentRound = matchState.getCurrentRound();
-
-            if(currentRound.getStatus() != RoundStatus.ACTIVE){
-                return;
-            }
-
-            if(!currentRound.isTimeout(Instant.now())){
-                return;
-            };
-
-            currentRound.showLearningReveal();
-            LearningRevealPayload payload = roundService.buildLearningRevealPayload(room);
-
-            RoundLeaderboardPayload roundLeaderboard = leaderboardService.buildRoundLeaderboard(
-                    currentRound.getRoundNumber(),
-                    room.getPlayers()
-            );
-
-            roomRepository.save(room);
-
-            gameEventPublisher.publishRoundTimeout(roomCode, currentRound.getRoundNumber());
-
-            gameEventPublisher.publishLearningReveal(roomCode, payload);
-
-            gameEventPublisher.publishRoundLeaderboard(roomCode, roundLeaderboard);
-        });
-    }
-
-    public void proceedAfterRound(String roomCode) {
-        roomLockManager.executeWithRoomLock(roomCode, () -> {
-            Room room = roomRepository.findByCode(roomCode)
-                    .orElseThrow(RoomNotFoundException::new);
-
-            MatchState matchState = room.getMatchState();
-            RoundState currentRound = matchState.getCurrentRound();
-
-            if (currentRound.getStatus() != RoundStatus.COMPLETED) {
-                return;
-            }
-
-            if (matchState.hasNextRound()) {
-                matchService.advanceToNextRound(matchState, room.getPlayers());
-
-                matchService.startRoundCountdown(matchState);
-
-                roomRepository.save(room);
-
-                gameEventPublisher.publishRoundCountdownStarted(
-                        roomCode,
-                        matchState.getCurrentRoundNumber()
-                );
-
-            } else {
-                matchService.finishMatch(matchState);
-
-                room.setStatus(RoomStatus.FINISHED);
-                FinalLeaderboardPayload finalLeaderboard = leaderboardService.buildFinalLeaderboard(room.getPlayers());
-
-                roomRepository.save(room);
-
-                gameEventPublisher.publishMatchFinished(roomCode);
-                gameEventPublisher.publishFinalLeaderboard(roomCode, finalLeaderboard);
-
-            }
-        });
-    }
 
     public GuessHandlingResult handleGuess(String roomCode, String playerId, char letter) {
         return roomLockManager.executeWithRoomLock(roomCode, () -> {
@@ -482,6 +410,42 @@ public class RoomService {
         });
     }
 
+    public void timeoutCurrentRound(String roomCode) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room =  roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            MatchState matchState = room.getMatchState();
+            RoundState currentRound = matchState.getCurrentRound();
+
+            if(currentRound.getStatus() != RoundStatus.ACTIVE){
+                return;
+            }
+
+            if(!currentRound.isTimeout(Instant.now())){
+                return;
+            };
+
+            currentRound.showLearningReveal();
+            LearningRevealPayload payload = roundService.buildLearningRevealPayload(room);
+
+            RoundLeaderboardPayload roundLeaderboard = leaderboardService.buildRoundLeaderboard(
+                    currentRound.getRoundNumber(),
+                    room.getPlayers()
+            );
+
+            roomRepository.save(room);
+
+            gameEventPublisher.publishRoundTimeout(roomCode, currentRound.getRoundNumber());
+
+            gameEventPublisher.publishLearningReveal(roomCode, payload);
+
+            gameEventPublisher.publishRoundLeaderboard(roomCode, roundLeaderboard);
+
+            proceedAfterRound(roomCode);
+        });
+    }
+
     public void endSuddenDeathIfNeed(String roomCode, Instant now) {
         roomLockManager.executeWithRoomLock(roomCode, () -> {
             Room room = roomRepository.findByCode(roomCode)
@@ -511,6 +475,47 @@ public class RoomService {
             gameEventPublisher.publishLearningReveal(roomCode,payload);
 
             gameEventPublisher.publishRoundLeaderboard(roomCode,roundLeaderboard);
+
+            proceedAfterRound(roomCode);
+        });
+    }
+
+    private void proceedAfterRound(String roomCode) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            MatchState matchState = room.getMatchState();
+            RoundState currentRound = matchState.getCurrentRound();
+
+            if (currentRound.getStatus() != RoundStatus.COMPLETED) {
+                return;
+            }
+
+            if (matchState.hasNextRound()) {
+                matchService.advanceToNextRound(matchState, room.getPlayers());
+
+                matchService.startRoundCountdown(matchState);
+
+                roomRepository.save(room);
+
+                gameEventPublisher.publishRoundCountdownStarted(
+                        roomCode,
+                        matchState.getCurrentRoundNumber()
+                );
+
+            } else {
+                matchService.finishMatch(matchState);
+
+                room.setStatus(RoomStatus.FINISHED);
+                FinalLeaderboardPayload finalLeaderboard = leaderboardService.buildFinalLeaderboard(room.getPlayers());
+
+                roomRepository.save(room);
+
+                gameEventPublisher.publishMatchFinished(roomCode);
+                gameEventPublisher.publishFinalLeaderboard(roomCode, finalLeaderboard);
+
+            }
         });
     }
 
