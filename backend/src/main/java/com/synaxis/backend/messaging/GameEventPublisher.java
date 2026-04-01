@@ -1,5 +1,6 @@
 package com.synaxis.backend.messaging;
 
+import com.synaxis.backend.match.dto.LearningRevealPayload;
 import com.synaxis.backend.messaging.dto.GenericGameEvent;
 import com.synaxis.backend.room.ws.event.*;
 import lombok.RequiredArgsConstructor;
@@ -197,6 +198,15 @@ public class GameEventPublisher {
         event.setType("SUDDEN_DEATH_ENDED");
         event.setRoomCode(roomCode);
         event.setRoundNumber(roundNumber);
+
+        publishPrivatePlayerEvent(roomCode, event);
+    }
+
+    public void publishLearningReveal(String roomCode, LearningRevealPayload payload){
+        LearningRevealEvent event = new LearningRevealEvent();
+        event.setType("LEARNING_REVEAL");
+        event.setRoomCode(roomCode);
+        event.setPayload(payload);
 
         publishPrivatePlayerEvent(roomCode, event);
     }

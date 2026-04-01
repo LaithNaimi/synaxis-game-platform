@@ -1,8 +1,10 @@
 package com.synaxis.backend.match.service;
 
 import com.synaxis.backend.match.dto.FirstSolverResult;
+import com.synaxis.backend.match.dto.LearningRevealPayload;
 import com.synaxis.backend.match.model.PlayerRoundProgress;
 import com.synaxis.backend.match.model.RoundState;
+import com.synaxis.backend.match.model.RoundWord;
 import com.synaxis.backend.room.model.PlayerSession;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.match.dto.GuessApplicationResult;
@@ -102,6 +104,22 @@ public class RoundService {
         round.enterSuddenDeath(playerId, now, suddenDeathAt);
 
         return new FirstSolverResult(true,true,suddenDeathAt);
+    }
+
+    public LearningRevealPayload buildLearningRevealPayload(Room room){
+        if(room.getMatchState() == null || room.getMatchState().getCurrentRound() == null){
+            throw new IllegalArgumentException("No current round available for learning reveal");
+        }
+
+        RoundState round = room.getMatchState().getCurrentRound();
+        RoundWord word = round.getRoundWord();
+
+        return new LearningRevealPayload(
+                round.getRoundNumber(),
+                word.getWord(),
+                word.getArabicMeaning(),
+                word.getEnglishDefinition()
+        );
     }
 
     private boolean isEnglishLetter(char letter){

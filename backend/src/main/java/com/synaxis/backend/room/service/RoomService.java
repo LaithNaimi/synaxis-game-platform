@@ -252,11 +252,13 @@ public class RoomService {
             };
 
             currentRound.showLearningReveal();
+            LearningRevealPayload payload = roundService.buildLearningRevealPayload(room);
 
             roomRepository.save(room);
 
             gameEventPublisher.publishRoundTimeout(roomCode, currentRound.getRoundNumber());
 
+            gameEventPublisher.publishLearningReveal(roomCode, payload);
         });
     }
 
@@ -485,12 +487,18 @@ public class RoomService {
             }
 
             round.showLearningReveal();
+            LearningRevealPayload payload = roundService.buildLearningRevealPayload(room);
 
             roomRepository.save(room);
 
             gameEventPublisher.publishSuddenDeathEnded(
                     roomCode,
                     round.getRoundNumber()
+            );
+
+            gameEventPublisher.publishLearningReveal(
+                    roomCode,
+                    payload
             );
         });
     }
