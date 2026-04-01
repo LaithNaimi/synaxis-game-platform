@@ -1,6 +1,8 @@
 package com.synaxis.backend.messaging;
 
+import com.synaxis.backend.match.dto.FinalLeaderboardPayload;
 import com.synaxis.backend.match.dto.LearningRevealPayload;
+import com.synaxis.backend.match.dto.RoundLeaderboardPayload;
 import com.synaxis.backend.messaging.dto.GenericGameEvent;
 import com.synaxis.backend.room.ws.event.*;
 import lombok.RequiredArgsConstructor;
@@ -205,6 +207,24 @@ public class GameEventPublisher {
     public void publishLearningReveal(String roomCode, LearningRevealPayload payload){
         LearningRevealEvent event = new LearningRevealEvent();
         event.setType("LEARNING_REVEAL");
+        event.setRoomCode(roomCode);
+        event.setPayload(payload);
+
+        publishPrivatePlayerEvent(roomCode, event);
+    }
+
+    public void publishRoundLeaderboard(String roomCode, RoundLeaderboardPayload payload){
+        RoundLeaderboardEvent event = new RoundLeaderboardEvent();
+        event.setType("ROUND_LEADERBOARD");
+        event.setRoomCode(roomCode);
+        event.setPayload(payload);
+
+        publishPrivatePlayerEvent(roomCode, event);
+    }
+
+    public void publishFinalLeaderboard(String roomCode, FinalLeaderboardPayload payload){
+        FinalLeaderboardEvent event = new FinalLeaderboardEvent();
+        event.setType("FINAL_LEADERBOARD");
         event.setRoomCode(roomCode);
         event.setPayload(payload);
 

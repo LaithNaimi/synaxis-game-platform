@@ -41,6 +41,7 @@ public class RoomService {
     private final HealthManager  healthManager;
     private final StunManager stunManager;
     private final PenaltyManager penaltyManager;
+    private final LeaderboardService leaderboardService;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -254,11 +255,18 @@ public class RoomService {
             currentRound.showLearningReveal();
             LearningRevealPayload payload = roundService.buildLearningRevealPayload(room);
 
+            RoundLeaderboardPayload roundLeaderboard = leaderboardService.buildRoundLeaderboard(
+                    currentRound.getRoundNumber(),
+                    room.getPlayers()
+            );
+
             roomRepository.save(room);
 
             gameEventPublisher.publishRoundTimeout(roomCode, currentRound.getRoundNumber());
 
             gameEventPublisher.publishLearningReveal(roomCode, payload);
+
+            gameEventPublisher.publishRoundLeaderboard(roomCode, roundLeaderboard);
         });
     }
 
@@ -290,10 +298,13 @@ public class RoomService {
                 matchService.finishMatch(matchState);
 
                 room.setStatus(RoomStatus.FINISHED);
+                FinalLeaderboardPayload finalLeaderboard = leaderboardService.buildFinalLeaderboard(room.getPlayers());
 
                 roomRepository.save(room);
 
                 gameEventPublisher.publishMatchFinished(roomCode);
+                gameEventPublisher.publishFinalLeaderboard(roomCode, finalLeaderboard);
+
             }
         });
     }
@@ -489,19 +500,20 @@ public class RoomService {
             round.showLearningReveal();
             LearningRevealPayload payload = roundService.buildLearningRevealPayload(room);
 
+            RoundLeaderboardPayload roundLeaderboard = leaderboardService.buildRoundLeaderboard(
+                    round.getRoundNumber(),
+                    room.getPlayers()
+            );
             roomRepository.save(room);
 
-            gameEventPublisher.publishSuddenDeathEnded(
-                    roomCode,
-                    round.getRoundNumber()
-            );
+            gameEventPublisher.publishSuddenDeathEnded(roomCode,round.getRoundNumber());
 
-            gameEventPublisher.publishLearningReveal(
-                    roomCode,
-                    payload
-            );
+            gameEventPublisher.publishLearningReveal(roomCode,payload);
+
+            gameEventPublisher.publishRoundLeaderboard(roomCode,roundLeaderboard);
         });
     }
+
     private String generateRoomCode() {
         String code;
         do {
