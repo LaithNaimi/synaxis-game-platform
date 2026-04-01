@@ -4,6 +4,7 @@ import com.synaxis.backend.match.dto.FinalLeaderboardPayload;
 import com.synaxis.backend.match.dto.LearningRevealPayload;
 import com.synaxis.backend.match.dto.RoundLeaderboardPayload;
 import com.synaxis.backend.messaging.dto.GenericGameEvent;
+import com.synaxis.backend.room.dto.ResyncSnapshot;
 import com.synaxis.backend.room.ws.event.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -258,5 +259,23 @@ public class GameEventPublisher {
         event.setNewHostPlayerId(newHostPlayerId);
 
         publishPrivatePlayerEvent(previousHostPlayerId, event);
+    }
+
+    public void publishPlayerReconnected(String roomCode, String playerId) {
+        PlayerReconnectedEvent event = new PlayerReconnectedEvent();
+        event.setType("PLAYER_RECONNECTED");
+        event.setRoomCode(roomCode);
+        event.setPlayerId(playerId);
+
+        publishRoomEvent(roomCode, event);
+    }
+
+    public void publishResyncSnapshot(String roomCode, String playerId, ResyncSnapshot snapshot) {
+        ResyncSnapshotEvent event = new ResyncSnapshotEvent();
+        event.setType("RESYNC_SNAPSHOT");
+        event.setRoomCode(roomCode);
+        event.setPayload(snapshot);
+
+        publishPrivatePlayerEvent(playerId, event);
     }
 }

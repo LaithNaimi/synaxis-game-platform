@@ -43,6 +43,7 @@ public class RoomService {
     private final PenaltyManager penaltyManager;
     private final LeaderboardService leaderboardService;
     private final DisconnectManager disconnectManager;
+    private final ReconnectSnapshotBuilder reconnectSnapshotBuilder;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -600,6 +601,42 @@ public class RoomService {
         });
     }
 
+    public ResyncSnapshot reconnectPlayer(String roomCode, String playerId, String playerToken) {
+        return roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            PlayerSession player = room.findPlayerById(playerId);
+            if (player == null) {
+                throw new IllegalStateException("Player not found");
+            }
+
+            if (!player.getPlayerToken().equals(playerToken)) {
+                throw new IllegalStateException("Player token is invalid");
+            }
+
+            if (player.getStatus() != com.synaxis.backend.room.model.PlayerStatus.OFFLINE_TEMP) {
+                throw new IllegalStateException("Player is not eligible for reconnect");
+            }
+
+            if (player.getReconnectDeadline() == null || java.time.Instant.now().isAfter(player.getReconnectDeadline())) {
+                throw new IllegalStateException("Reconnect window expired");
+            }
+
+            player.setConnected(true);
+            player.setStatus(com.synaxis.backend.room.model.PlayerStatus.ACTIVE);
+            player.setReconnectDeadline(null);
+
+            ResyncSnapshot snapshot = reconnectSnapshotBuilder.build(room, player);
+
+            roomRepository.save(room);
+
+            gameEventPublisher.publishPlayerReconnected(roomCode, playerId);
+            gameEventPublisher.publishResyncSnapshot(roomCode, playerId, snapshot);
+
+            return snapshot;
+        });
+    }
     private String generateRoomCode() {
         String code;
         do {

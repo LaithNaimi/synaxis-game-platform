@@ -38,11 +38,14 @@ public class RoomController {
     }
 
     @PostMapping("/{roomCode}/reconnect")
-    public ResponseEntity<ApiSuccessResponse<ReconnectRoomResponse>> reconnectRoom(
+    public ResponseEntity<ApiSuccessResponse<ResyncSnapshot>> reconnectRoom(
             @PathVariable String roomCode,
             @Valid @RequestBody ReconnectRoomRequest request
     ) {
-        ReconnectRoomResponse response = roomService.reconnectRoom(roomCode, request);
-        return ResponseEntity.ok(ApiSuccessResponse.success(response));
+        ResyncSnapshot snapshot = roomService.reconnectPlayer(roomCode,
+                request.getPlayerId(),
+                request.getPlayerToken()
+        );
+        return ResponseEntity.ok(ApiSuccessResponse.success(snapshot));
     }
 }
