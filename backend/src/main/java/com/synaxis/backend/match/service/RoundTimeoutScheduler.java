@@ -19,11 +19,11 @@ public class RoundTimeoutScheduler {
             if(room.getStatus() != RoomStatus.IN_GAME){
                 continue;
             }
-            if(room.getMatchState() == null && room.getMatchState().getCurrentRound() == null){
+            if(room.getMatchState() == null || room.getMatchState().getCurrentRound() == null){
                 continue;
             }
 
-            roomService.timeoutCurrentRound(room.getRoomCode());
+            roomService.timeoutCurrentRoundIfNeed(room.getRoomCode());
         }
     }
 }

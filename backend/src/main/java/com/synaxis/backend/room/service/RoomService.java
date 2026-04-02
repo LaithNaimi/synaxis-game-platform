@@ -412,7 +412,7 @@ public class RoomService {
         });
     }
 
-    public void timeoutCurrentRound(String roomCode) {
+    public void timeoutCurrentRoundIfNeed(String roomCode) {
         roomLockManager.executeWithRoomLock(roomCode, () -> {
             Room room =  roomRepository.findByCode(roomCode)
                     .orElseThrow(RoomNotFoundException::new);
