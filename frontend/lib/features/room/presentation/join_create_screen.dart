@@ -64,7 +64,7 @@ class _JoinCreateScreenState extends ConsumerState<JoinCreateScreen> {
       ref.read(roomSessionProvider.notifier).setSession(session);
 
       if (!mounted) return;
-
+      print("DATA $data");
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const LobbyScreen()),

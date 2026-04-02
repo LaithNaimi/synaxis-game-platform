@@ -9,6 +9,7 @@ import '../data/lobby_event_handler.dart';
 import '../data/room_live_state_model.dart';
 import '../data/room_live_state_provider.dart';
 import '../data/room_session_provider.dart';
+import '../../game/presentation/game_screen.dart';
 
 class LobbyScreen extends ConsumerStatefulWidget {
   const LobbyScreen({super.key});
@@ -44,13 +45,21 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
 
     _ws.connect(
       onConnect: (_) {
-        _connected = true;
+        print("WS CONNECTED");
+        setState(() {
+          _connected = true;
+        });
 
         _ws.subscribe("/topic/room/$roomCode", (frame) {
+          print("WS EVENT RAW = ${frame.body}");
+
           if (frame.body == null) return;
 
           final body = jsonDecode(frame.body!);
+          print("WS EVENT JSON = $body");
+
           final type = body["type"];
+          print("WS EVENT TYPE = $type");
 
           final liveState = ref.read(roomLiveStateProvider);
           if (liveState == null) return;
@@ -80,7 +89,16 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
           }
 
           if (type == "GAME_STARTED") {
+            print("GAME_STARTED RECEIVED");
+
             ref.read(roomLiveStateProvider.notifier).markGameStarted();
+
+            if (mounted) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const GameScreen()),
+              );
+            }
           }
         });
       },
@@ -104,7 +122,9 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
 
     final players = liveState?.players ?? session.players;
     final gameStarted = liveState?.gameStarted ?? false;
-
+    print("lobby  : isHost = ${session.player.isHost}");
+    print("gameStarted = $gameStarted");
+    print("_connected = $_connected");
     return Scaffold(
       appBar: AppBar(title: const Text("Lobby")),
       body: Padding(
@@ -125,6 +145,21 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
             Text("Host: ${session.player.isHost ? "Yes" : "No"}"),
             const SizedBox(height: 12),
             Text("Game Started: ${gameStarted ? "Yes" : "No"}"),
+            const SizedBox(height: 12),
+
+            if (session.player.isHost && !gameStarted && _connected)
+              ElevatedButton(
+                onPressed: () {
+                  print("START BUTTIN PRESSED");
+                  _ws.sendJson("/app/game.start", {
+                    "roomCode": session.roomCode,
+                    "playerId": session.player.playerId,
+                    "playerToken": session.player.playerToken,
+                  });
+                },
+                child: const Text("Start Game"),
+              ),
+
             const SizedBox(height: 24),
             const Text(
               "Players",

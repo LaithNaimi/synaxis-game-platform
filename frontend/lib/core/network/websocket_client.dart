@@ -1,7 +1,7 @@
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
-
+import 'dart:convert';
 import '../config/app_config.dart';
 
 class WebSocketClient {
@@ -37,5 +37,11 @@ class WebSocketClient {
 
   void disconnect() {
     _client?.deactivate();
+  }
+
+  void sendJson(String destination, Map<String, dynamic> body) {
+    print("SEND JSON DONE : $destination");
+    print("JSON -> $body");
+    _client?.send(destination: destination, body: jsonEncode(body));
   }
 }
