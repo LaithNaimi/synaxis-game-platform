@@ -123,7 +123,7 @@ public class RoundService {
     }
 
     private boolean isEnglishLetter(char letter){
-        return letter >= 'a' && letter <= 'b';
+        return letter >= 'a' && letter <= 'z';
     }
 
     private String buildMaskedWord(String word, Set<Character> correctLetters){
@@ -134,7 +134,7 @@ public class RoundService {
                 masked.append(currentLetter);
             }
             else {
-                masked.append(' ');
+                masked.append('_');
             }
             masked.append(' ');
         }
