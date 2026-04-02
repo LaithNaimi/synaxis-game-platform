@@ -1,4 +1,7 @@
-import 'package:stomp_dart_client/stomp_dart_client.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
+
 import '../config/app_config.dart';
 
 class WebSocketClient {
@@ -6,11 +9,17 @@ class WebSocketClient {
 
   void connect({required void Function(StompFrame frame) onConnect}) {
     _client = StompClient(
-      config: StompConfig.SockJS(
+      config: StompConfig(
         url: AppConfig.wsUrl,
         onConnect: onConnect,
-        onWebSocketError: (error) {
+        beforeConnect: () async {
+          await Future.delayed(const Duration(milliseconds: 200));
+        },
+        onWebSocketError: (dynamic error) {
           print("WebSocket error: $error");
+        },
+        onStompError: (StompFrame frame) {
+          print("STOMP error: ${frame.body}");
         },
       ),
     );
@@ -18,7 +27,7 @@ class WebSocketClient {
     _client!.activate();
   }
 
-  void subscribe(String destination, Function(StompFrame) callback) {
+  void subscribe(String destination, void Function(StompFrame frame) callback) {
     _client?.subscribe(destination: destination, callback: callback);
   }
 
