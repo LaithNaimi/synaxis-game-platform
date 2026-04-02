@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:synaxis/shared/models/player_summary_model.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../shared/models/player_session_model.dart';
@@ -37,6 +38,18 @@ class _JoinCreateScreenState extends ConsumerState<JoinCreateScreen> {
 
       final data = result["data"];
 
+      final playersJson = (data["players"] as List<dynamic>? ?? []);
+
+      final players = playersJson
+          .map(
+            (p) => PlayerSummaryModel(
+              playerId: p["playerId"],
+              playerName: p["playerName"],
+              isHost: p["host"] ?? p["isHost"] ?? false,
+            ),
+          )
+          .toList();
+
       final session = RoomSessionModel(
         roomCode: data["roomCode"],
         player: PlayerSessionModel(
@@ -45,6 +58,7 @@ class _JoinCreateScreenState extends ConsumerState<JoinCreateScreen> {
           playerToken: data["playerToken"],
           isHost: data["host"] ?? data["isHost"] ?? true,
         ),
+        players: players,
       );
 
       ref.read(roomSessionProvider.notifier).setSession(session);
@@ -72,8 +86,38 @@ class _JoinCreateScreenState extends ConsumerState<JoinCreateScreen> {
         _nameController.text,
       );
 
-      print("Join result: $result");
-      _showMessage("Joined room!");
+      final data = result["data"];
+      final playersJson = (data["players"] as List<dynamic>? ?? []);
+
+      final players = playersJson
+          .map(
+            (p) => PlayerSummaryModel(
+              playerId: p["playerId"],
+              playerName: p["playerName"],
+              isHost: p["host"] ?? p["isHost"] ?? false,
+            ),
+          )
+          .toList();
+
+      final session = RoomSessionModel(
+        roomCode: data["roomCode"],
+        player: PlayerSessionModel(
+          playerId: data["playerId"],
+          playerName: data["playerName"],
+          playerToken: data["playerToken"],
+          isHost: data["host"] ?? data["isHost"] ?? false,
+        ),
+        players: players,
+      );
+
+      ref.read(roomSessionProvider.notifier).setSession(session);
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LobbyScreen()),
+      );
     } catch (e) {
       print("ERROR: $e");
       _showMessage("Error joining room");

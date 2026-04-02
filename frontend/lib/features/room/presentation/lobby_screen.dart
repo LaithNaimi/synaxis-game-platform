@@ -26,13 +26,32 @@ class LobbyScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              "Player: ${session.player.playerName}",
+              "You: ${session.player.playerName}",
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 12),
-            Text("Player ID: ${session.player.playerId}"),
-            const SizedBox(height: 12),
             Text("Host: ${session.player.isHost ? "Yes" : "No"}"),
+            const SizedBox(height: 24),
+            const Text(
+              "Players",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListView.builder(
+                itemCount: session.players.length,
+                itemBuilder: (context, index) {
+                  final player = session.players[index];
+                  return ListTile(
+                    title: Text(player.playerName),
+                    subtitle: Text(player.playerId),
+                    trailing: player.isHost
+                        ? const Text("Host")
+                        : const SizedBox.shrink(),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
