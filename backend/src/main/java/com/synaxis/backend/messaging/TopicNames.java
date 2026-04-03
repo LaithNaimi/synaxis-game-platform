@@ -6,15 +6,15 @@ public final class TopicNames {
     }
 
     public static String roomTopic(String roomCode) {
-        return "/topic/rooms/" + roomCode;
+        return "/topic/room/" + roomCode;
     }
 
     public static String roomRoundTopic(String roomCode) {
-        return "/topic/rooms/" + roomCode + "/round";
+        return "/topic/room/" + roomCode + "/round";
     }
 
     public static String roomLeaderboardTopic(String roomCode) {
-        return "/topic/rooms/" + roomCode + "/leaderboard";
+        return "/topic/room/" + roomCode + "/leaderboard";
     }
 
     public static String userGameQueue() {

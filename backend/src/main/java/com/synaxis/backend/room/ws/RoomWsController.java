@@ -18,8 +18,11 @@ public class RoomWsController {
 
     @MessageMapping("/game.start")
     public void startGame(StartGameCommand command) {
-        commandValidationService.validateHostStartGameCommand(command);
-        roomService.startGame(command.getRoomCode());
+            AuthorizedPlayerContext context = commandValidationService.validatePlayerCommand(command);
+            roomService.startGame(
+                    context.getRoom().getRoomCode(),
+                    context.getPlayer().getPlayerId()
+            );
     }
 
     @MessageMapping("/game.guess-letter")

@@ -201,13 +201,18 @@ public class RoomService {
         });
     }
 
-    public void startGame(String roomCode) {
+    public void startGame(String roomCode, String playerId) {
         roomLockManager.executeWithRoomLock(roomCode, () -> {
             Room room = roomRepository.findByCode(roomCode)
                     .orElseThrow(RoomNotFoundException::new);
 
             if (room.getStatus() != RoomStatus.WAITING) {
                 throw new GameAlreadyStartedException();
+            }
+
+            PlayerSession player = room.findPlayerById(playerId);
+            if(player == null || !player.isHost()) {
+                throw new PlayerNotAuthorizedException();
             }
 
             MatchState matchState = matchService.createMatchState(room);
