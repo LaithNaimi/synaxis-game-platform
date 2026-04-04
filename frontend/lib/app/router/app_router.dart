@@ -22,66 +22,64 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouteNames.createRoom,
-      builder: (context, _) => _PageShell(
+      builder: (context, _) => const _PageShell(
         title: 'Create room',
-        child: const CreateRoomScreen(),
+        child: CreateRoomScreen(),
       ),
     ),
     GoRoute(
       path: RouteNames.joinRoom,
-      builder: (context, _) => _PageShell(
+      builder: (context, _) => const _PageShell(
         title: 'Join room',
-        child: const JoinRoomScreen(),
+        child: JoinRoomScreen(),
       ),
     ),
     GoRoute(
       path: RouteNames.lobby,
-      builder: (context, _) => _PageShell(
+      builder: (context, _) => const _PageShell(
         title: 'Lobby',
-        child: const LobbyScreen(),
+        child: LobbyScreen(),
       ),
     ),
     GoRoute(
       path: RouteNames.countdown,
-      builder: (context, _) => _PageShell(
+      builder: (context, _) => const _PageShell(
         title: 'Countdown',
-        child: const CountdownScreen(),
+        child: CountdownScreen(),
       ),
     ),
     GoRoute(
       path: RouteNames.game,
-      builder: (context, _) => _PageShell(
+      builder: (context, _) => const _PageShell(
         title: 'Game',
-        child: const GameScreen(),
+        child: GameScreen(),
       ),
     ),
     GoRoute(
       path: RouteNames.learning,
-      builder: (context, _) => _PageShell(
+      builder: (context, _) => const _PageShell(
         title: 'Learning',
-        child: const LearningRevealScreen(),
+        child: LearningRevealScreen(),
       ),
     ),
     GoRoute(
       path: RouteNames.roundLeaderboard,
-      builder: (context, _) => _PageShell(
+      builder: (context, _) => const _PageShell(
         title: 'Round leaderboard',
-        child: const RoundLeaderboardScreen(),
+        child: RoundLeaderboardScreen(),
       ),
     ),
     GoRoute(
       path: RouteNames.finalLeaderboard,
-      builder: (context, _) => _PageShell(
+      builder: (context, _) => const _PageShell(
         title: 'Final leaderboard',
-        child: const FinalLeaderboardScreen(),
+        child: FinalLeaderboardScreen(),
       ),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
     appBar: AppBar(
-      leading: BackButton(
-        onPressed: () => context.go(RouteNames.home),
-      ),
+      leading: BackButton(onPressed: () => context.go(RouteNames.home)),
       title: const Text('Not found'),
     ),
     body: Center(child: Text('No route: ${state.uri}')),

@@ -9,7 +9,7 @@ class AppTheme {
   AppTheme._();
 
   static ThemeData light() {
-    final colorScheme = ColorScheme.light(
+    const colorScheme = ColorScheme.light(
       primary: AppColors.primary,
       onPrimary: AppColors.onPrimary,
       primaryContainer: AppColors.primaryDark,
@@ -35,7 +35,9 @@ class AppTheme {
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.onSurface,
         elevation: AppRadius.elevationLow,
-        titleTextStyle: AppTextStyles.title.copyWith(color: AppColors.onSurface),
+        titleTextStyle: AppTextStyles.title.copyWith(
+          color: AppColors.onSurface,
+        ),
       ),
       cardTheme: CardThemeData(
         color: AppColors.surface,

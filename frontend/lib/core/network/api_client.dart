@@ -7,13 +7,13 @@ import '../utils/logger.dart';
 /// Wraps a single [Dio] instance (DDS §9.2): 10s connect + receive timeouts.
 class ApiClient {
   ApiClient._()
-      : dio = Dio(
-          BaseOptions(
-            baseUrl: AppConfig.baseUrl,
-            connectTimeout: const Duration(seconds: 10),
-            receiveTimeout: const Duration(seconds: 10),
-          ),
-        ) {
+    : dio = Dio(
+        BaseOptions(
+          baseUrl: AppConfig.baseUrl,
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+        ),
+      ) {
     if (kDebugMode) {
       dio.interceptors.add(
         LogInterceptor(

@@ -1,17 +1,38 @@
-# synaxis
+# Synaxis — Flutter client
 
-A new Flutter project.
+Mobile-first client for the Synaxis game platform. See repo docs: `docs/synaxis_frontend_dds.md`, `docs/synaxis_frontend_master_build_plan.md`.
 
-## Getting Started
+## Prerequisites
 
-This project is a starting point for a Flutter application.
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (stable), Dart SDK as bundled.
 
-A few resources to get you started if this is your first Flutter project:
+## Run locally
+
+```bash
+cd frontend
+flutter pub get
+flutter run
+```
+
+## CI checks (run before pushing / opening a PR)
+
+From the `frontend` directory:
+
+```bash
+flutter pub get
+dart format --set-exit-if-changed .
+flutter analyze
+flutter test
+```
+
+The same steps run in GitHub Actions (`.github/workflows/flutter_ci.yml`) on changes under `frontend/`.
+
+## Configuration
+
+- REST / WebSocket base URLs: `lib/core/config/app_config.dart` (defaults for Android emulator). Override at build time, e.g.  
+  `--dart-define=SYNAXIS_BASE_URL=http://192.168.1.10:8080 --dart-define=SYNAXIS_WS_URL=ws://192.168.1.10:8080/ws`
+
+## Getting started with Flutter
 
 - [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [Flutter documentation](https://docs.flutter.dev/)

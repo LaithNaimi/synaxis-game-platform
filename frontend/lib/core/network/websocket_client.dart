@@ -66,10 +66,7 @@ class WebSocketClient {
     if (client == null || !client.connected) {
       throw StateError('WebSocketClient.sendJson: not connected');
     }
-    final merged = {
-      'content-type': 'application/json',
-      ...?headers,
-    };
+    final merged = {'content-type': 'application/json', ...?headers};
     client.send(
       destination: destination,
       body: jsonEncode(body),

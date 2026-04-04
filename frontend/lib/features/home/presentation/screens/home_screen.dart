@@ -23,23 +23,45 @@ class HomeScreen extends StatelessWidget {
               tooltip: 'Jump to route (debug)',
               onSelected: context.go,
               itemBuilder: (context) => [
-                const PopupMenuItem(value: RouteNames.createRoom, child: Text('Create room')),
-                const PopupMenuItem(value: RouteNames.joinRoom, child: Text('Join room')),
-                const PopupMenuItem(value: RouteNames.lobby, child: Text('Lobby')),
-                const PopupMenuItem(value: RouteNames.countdown, child: Text('Countdown')),
-                const PopupMenuItem(value: RouteNames.game, child: Text('Game')),
-                const PopupMenuItem(value: RouteNames.learning, child: Text('Learning')),
-                const PopupMenuItem(value: RouteNames.roundLeaderboard, child: Text('Round leaderboard')),
-                const PopupMenuItem(value: RouteNames.finalLeaderboard, child: Text('Final leaderboard')),
+                const PopupMenuItem(
+                  value: RouteNames.createRoom,
+                  child: Text('Create room'),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.joinRoom,
+                  child: Text('Join room'),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.lobby,
+                  child: Text('Lobby'),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.countdown,
+                  child: Text('Countdown'),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.game,
+                  child: Text('Game'),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.learning,
+                  child: Text('Learning'),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.roundLeaderboard,
+                  child: Text('Round leaderboard'),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.finalLeaderboard,
+                  child: Text('Final leaderboard'),
+                ),
               ],
             ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
-        child: Center(
-          child: Text('Home', style: textTheme.titleLarge),
-        ),
+        child: Center(child: Text('Home', style: textTheme.titleLarge)),
       ),
     );
   }
