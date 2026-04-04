@@ -5,6 +5,6 @@ class RoundLeaderboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Round Leaderboard')));
+    return const Center(child: Text('Round Leaderboard'));
   }
 }

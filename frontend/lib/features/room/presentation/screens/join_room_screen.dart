@@ -5,6 +5,6 @@ class JoinRoomScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Join Room')));
+    return const Center(child: Text('Join Room'));
   }
 }

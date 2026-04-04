@@ -5,6 +5,6 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Game')));
+    return const Center(child: Text('Game'));
   }
 }

@@ -5,6 +5,6 @@ class CountdownScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Countdown')));
+    return const Center(child: Text('Countdown'));
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'app/router/app_router.dart';
 import 'app/theme/app_theme.dart';
-import 'features/home/presentation/screens/home_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -13,11 +13,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Synaxis',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
-      home: const HomeScreen(),
+      routerConfig: appRouter,
     );
   }
 }

@@ -5,6 +5,6 @@ class LobbyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Lobby')));
+    return const Center(child: Text('Lobby'));
   }
 }
