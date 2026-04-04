@@ -5,12 +5,14 @@ import com.synaxis.backend.match.dto.LearningRevealPayload;
 import com.synaxis.backend.match.dto.RoundLeaderboardPayload;
 import com.synaxis.backend.messaging.dto.GenericGameEvent;
 import com.synaxis.backend.room.dto.ResyncSnapshot;
+import com.synaxis.backend.room.dto.PlayerSummaryResponse;
 import com.synaxis.backend.room.ws.event.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -36,6 +38,23 @@ public class GameEventPublisher {
                 event
         );
     }
+
+    public void publishPlayerJoined(
+            String roomCode,
+            String playerId,
+            String playerName,
+            boolean host
+    ) {
+        PlayerJoinedEvent event = new PlayerJoinedEvent();
+        event.setType("PLAYER_JOINED");
+        event.setRoomCode(roomCode);
+        event.setPlayerId(playerId);
+        event.setPlayerName(playerName);
+        event.setHost(host);
+
+        publishRoomEvent(roomCode, event);
+    }
+
 
     public void publishRoundEvent(String roomCode, Object event) {
         messagingTemplate.convertAndSend(

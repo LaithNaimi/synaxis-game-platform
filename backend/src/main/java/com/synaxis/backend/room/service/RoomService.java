@@ -121,6 +121,13 @@ public class RoomService {
             room.addPlayer(playerSession);
             roomRepository.save(room);
 
+            gameEventPublisher.publishPlayerJoined(
+                    roomCode,
+                    playerId,
+                    request.getPlayerName(),
+                    playerSession.isHost()
+            );
+
             List<PlayerSummaryResponse> players =  room.getPlayers()
                     .stream()
                     .map(player -> new PlayerSummaryResponse(
@@ -129,6 +136,7 @@ public class RoomService {
                             player.isHost()
                     ))
                     .toList();
+            gameEventPublisher.publishRoomRosterUpdated(roomCode, players);
             return new JoinRoomResponse(
                     roomCode,
                     playerId,
@@ -164,6 +172,17 @@ public class RoomService {
                 room.assignHostToFirstPlayerIfNeeded();
             }
             roomRepository.save(room);
+            if (!room.isEmpty()) {
+                List<PlayerSummaryResponse> updatedPlayers = room.getPlayers()
+                        .stream()
+                        .map(p -> new PlayerSummaryResponse(
+                                p.getPlayerId(),
+                                p.getPlayerName(),
+                                p.isHost()
+                        ))
+                        .toList();
+                gameEventPublisher.publishRoomRosterUpdated(roomCode, updatedPlayers);
+            }
         });
     }
 
