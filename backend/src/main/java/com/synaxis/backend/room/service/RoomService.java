@@ -136,7 +136,7 @@ public class RoomService {
                             player.isHost()
                     ))
                     .toList();
-            gameEventPublisher.publishRoomRosterUpdated(roomCode, players);
+         //   gameEventPublisher.publishRoomRosterUpdated(roomCode, players);
             return new JoinRoomResponse(
                     roomCode,
                     playerId,
@@ -181,7 +181,7 @@ public class RoomService {
                                 p.isHost()
                         ))
                         .toList();
-                gameEventPublisher.publishRoomRosterUpdated(roomCode, updatedPlayers);
+                //gameEventPublisher.publishRoomRosterUpdated(roomCode, updatedPlayers);
             }
         });
     }
