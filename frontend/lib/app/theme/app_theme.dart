@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_spacing.dart';
 import 'app_text_styles.dart';
+import 'home_screen_theme.dart';
 
 /// Application [ThemeData] for light MVP (DDS §8).
 class AppTheme {
@@ -30,6 +31,7 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
+      extensions: const [HomeScreenTheme.synaxis],
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.background,
       textTheme: textTheme,
