@@ -22,45 +22,33 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouteNames.createRoom,
-      builder: (context, _) => const _PageShell(
-        title: 'Create room',
-        child: CreateRoomScreen(),
-      ),
+      builder: (context, _) =>
+          const _PageShell(title: 'Create room', child: CreateRoomScreen()),
     ),
     GoRoute(
       path: RouteNames.joinRoom,
-      builder: (context, _) => const _PageShell(
-        title: 'Join room',
-        child: JoinRoomScreen(),
-      ),
+      builder: (context, _) =>
+          const _PageShell(title: 'Join room', child: JoinRoomScreen()),
     ),
     GoRoute(
       path: RouteNames.lobby,
-      builder: (context, _) => const _PageShell(
-        title: 'Lobby',
-        child: LobbyScreen(),
-      ),
+      builder: (context, _) =>
+          const _PageShell(title: 'Lobby', child: LobbyScreen()),
     ),
     GoRoute(
       path: RouteNames.countdown,
-      builder: (context, _) => const _PageShell(
-        title: 'Countdown',
-        child: CountdownScreen(),
-      ),
+      builder: (context, _) =>
+          const _PageShell(title: 'Countdown', child: CountdownScreen()),
     ),
     GoRoute(
       path: RouteNames.game,
-      builder: (context, _) => const _PageShell(
-        title: 'Game',
-        child: GameScreen(),
-      ),
+      builder: (context, _) =>
+          const _PageShell(title: 'Game', child: GameScreen()),
     ),
     GoRoute(
       path: RouteNames.learning,
-      builder: (context, _) => const _PageShell(
-        title: 'Learning',
-        child: LearningRevealScreen(),
-      ),
+      builder: (context, _) =>
+          const _PageShell(title: 'Learning', child: LearningRevealScreen()),
     ),
     GoRoute(
       path: RouteNames.roundLeaderboard,

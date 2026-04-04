@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 /// Typography scale (DDS §8.4). Base styles without color — color comes from [TextTheme] / [ColorScheme].
+///
+/// DDS names: [textDisplay], [textTitle], [textBody], [textLabel], [textCaption].
+/// Short names ([display], …) are aliases for use inside theme wiring.
 abstract final class AppTextStyles {
   static const TextStyle display = TextStyle(
     fontSize: 34,
@@ -32,17 +35,23 @@ abstract final class AppTextStyles {
     height: 1.35,
   );
 
+  static const TextStyle textDisplay = display;
+  static const TextStyle textTitle = title;
+  static const TextStyle textBody = body;
+  static const TextStyle textLabel = label;
+  static const TextStyle textCaption = caption;
+
   /// Maps DDS tokens to Material 3 [TextTheme] with explicit [onSurface] / [onSurfaceVariant].
   static TextTheme textTheme({
     required Color onSurface,
     required Color onSurfaceVariant,
   }) {
     return TextTheme(
-      displayLarge: display.copyWith(color: onSurface),
-      titleLarge: title.copyWith(color: onSurface),
-      bodyLarge: body.copyWith(color: onSurface),
-      labelLarge: label.copyWith(color: onSurface),
-      bodySmall: caption.copyWith(color: onSurfaceVariant),
+      displayLarge: textDisplay.copyWith(color: onSurface),
+      titleLarge: textTitle.copyWith(color: onSurface),
+      bodyLarge: textBody.copyWith(color: onSurface),
+      labelLarge: textLabel.copyWith(color: onSurface),
+      bodySmall: textCaption.copyWith(color: onSurfaceVariant),
     );
   }
 }

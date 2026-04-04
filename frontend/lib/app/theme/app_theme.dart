@@ -13,11 +13,14 @@ class AppTheme {
       primary: AppColors.primary,
       onPrimary: AppColors.onPrimary,
       primaryContainer: AppColors.primaryDark,
+      onPrimaryContainer: AppColors.onPrimary,
       surface: AppColors.surface,
       onSurface: AppColors.onSurface,
+      onSurfaceVariant: AppColors.onSurfaceVariant,
       error: AppColors.error,
       onError: AppColors.onPrimary,
       outline: AppColors.outline,
+      surfaceTint: Colors.transparent,
     );
 
     final textTheme = AppTextStyles.textTheme(
@@ -35,8 +38,23 @@ class AppTheme {
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.onSurface,
         elevation: AppRadius.elevationLow,
-        titleTextStyle: AppTextStyles.title.copyWith(
+        titleTextStyle: AppTextStyles.textTitle.copyWith(
           color: AppColors.onSurface,
+        ),
+      ),
+      dividerTheme: const DividerThemeData(
+        color: AppColors.outline,
+        space: AppSpacing.md,
+        thickness: 1,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: AppColors.onSurface,
+        contentTextStyle: AppTextStyles.textBody.copyWith(
+          color: AppColors.surface,
+        ),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
         ),
       ),
       cardTheme: CardThemeData(
