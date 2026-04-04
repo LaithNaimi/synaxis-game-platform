@@ -1,47 +1,4 @@
-import 'package:stomp_dart_client/stomp.dart';
-import 'package:stomp_dart_client/stomp_config.dart';
-import 'package:stomp_dart_client/stomp_frame.dart';
-import 'dart:convert';
-import '../config/app_config.dart';
-
+/// STOMP client facade — implemented in FE-001.4 (DDS §9.3).
 class WebSocketClient {
-  StompClient? _client;
-
-  void connect({required void Function(StompFrame frame) onConnect}) {
-    _client = StompClient(
-      config: StompConfig(
-        url: AppConfig.wsUrl,
-        onConnect: onConnect,
-        beforeConnect: () async {
-          await Future.delayed(const Duration(milliseconds: 200));
-        },
-        onWebSocketError: (dynamic error) {
-          print("WebSocket error: $error");
-        },
-        onStompError: (StompFrame frame) {
-          print("STOMP error: ${frame.body}");
-        },
-      ),
-    );
-
-    _client!.activate();
-  }
-
-  void subscribe(String destination, void Function(StompFrame frame) callback) {
-    _client?.subscribe(destination: destination, callback: callback);
-  }
-
-  void send(String destination, String body) {
-    _client?.send(destination: destination, body: body);
-  }
-
-  void disconnect() {
-    _client?.deactivate();
-  }
-
-  void sendJson(String destination, Map<String, dynamic> body) {
-    print("SEND JSON DONE : $destination");
-    print("JSON -> $body");
-    _client?.send(destination: destination, body: jsonEncode(body));
-  }
+  const WebSocketClient._();
 }

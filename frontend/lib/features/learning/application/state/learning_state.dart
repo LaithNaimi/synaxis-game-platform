@@ -1,0 +1,3 @@
+class LearningState {
+  const LearningState();
+}

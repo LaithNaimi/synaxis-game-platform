@@ -1,0 +1,3 @@
+class ResyncSnapshotModel {
+  const ResyncSnapshotModel();
+}

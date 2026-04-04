@@ -1,0 +1,3 @@
+class RoomSettingsModel {
+  const RoomSettingsModel();
+}

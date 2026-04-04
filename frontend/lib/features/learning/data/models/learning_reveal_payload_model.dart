@@ -1,0 +1,3 @@
+class LearningRevealPayloadModel {
+  const LearningRevealPayloadModel();
+}

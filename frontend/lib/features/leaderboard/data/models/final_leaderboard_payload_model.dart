@@ -1,0 +1,3 @@
+class FinalLeaderboardPayloadModel {
+  const FinalLeaderboardPayloadModel();
+}

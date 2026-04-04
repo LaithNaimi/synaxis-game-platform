@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'features/room/presentation/join_create_screen.dart';
+
+import 'app/theme/app_theme.dart';
+import 'features/home/presentation/screens/home_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -14,7 +16,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Synaxis',
       debugShowCheckedModeBanner: false,
-      home: const JoinCreateScreen(),
+      theme: AppTheme.light(),
+      home: const HomeScreen(),
     );
   }
 }

@@ -1,0 +1,3 @@
+class CreateRoomRequest {
+  const CreateRoomRequest();
+}

@@ -1,0 +1,3 @@
+class CountdownState {
+  const CountdownState();
+}

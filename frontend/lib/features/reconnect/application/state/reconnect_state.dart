@@ -1,0 +1,3 @@
+class ReconnectState {
+  const ReconnectState();
+}

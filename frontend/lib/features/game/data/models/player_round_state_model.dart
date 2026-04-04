@@ -1,0 +1,3 @@
+class PlayerRoundStateModel {
+  const PlayerRoundStateModel();
+}

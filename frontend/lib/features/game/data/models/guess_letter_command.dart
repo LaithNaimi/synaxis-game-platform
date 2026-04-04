@@ -1,0 +1,3 @@
+class GuessLetterCommand {
+  const GuessLetterCommand();
+}

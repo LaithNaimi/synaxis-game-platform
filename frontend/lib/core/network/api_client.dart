@@ -1,16 +1,4 @@
-import 'package:dio/dio.dart';
-import '../config/app_config.dart';
-
+/// Dio wrapper — implemented in FE-001.4 (DDS §9.2).
 class ApiClient {
-  late final Dio dio;
-
-  ApiClient() {
-    dio = Dio(
-      BaseOptions(
-        baseUrl: AppConfig.baseUrl,
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
-      ),
-    );
-  }
+  const ApiClient._();
 }

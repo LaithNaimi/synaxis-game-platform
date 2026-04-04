@@ -1,0 +1,3 @@
+class GameController {
+  const GameController();
+}

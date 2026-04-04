@@ -1,0 +1,3 @@
+class RoomSessionModel {
+  const RoomSessionModel();
+}

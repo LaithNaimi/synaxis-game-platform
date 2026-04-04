@@ -1,0 +1,3 @@
+class JoinRoomResponse {
+  const JoinRoomResponse();
+}

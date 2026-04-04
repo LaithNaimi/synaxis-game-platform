@@ -1,0 +1,3 @@
+class PlayerSummaryModel {
+  const PlayerSummaryModel();
+}

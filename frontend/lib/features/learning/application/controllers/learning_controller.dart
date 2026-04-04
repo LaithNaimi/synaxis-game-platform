@@ -1,0 +1,3 @@
+class LearningController {
+  const LearningController();
+}

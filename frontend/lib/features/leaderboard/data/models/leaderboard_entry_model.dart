@@ -1,0 +1,3 @@
+class LeaderboardEntryModel {
+  const LeaderboardEntryModel();
+}

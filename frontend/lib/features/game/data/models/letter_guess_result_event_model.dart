@@ -1,0 +1,3 @@
+class LetterGuessResultEventModel {
+  const LetterGuessResultEventModel();
+}
