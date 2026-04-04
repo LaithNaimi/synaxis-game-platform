@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/theme/app_text_styles.dart';
+import '../../../../app/theme/app_spacing.dart';
 
 /// Entry screen (DDS §15.1). CTAs wired in FE-002.1.
 class HomeScreen extends StatelessWidget {
@@ -8,10 +8,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Synaxis')),
-      body: Center(
-        child: Text('Home', style: AppTextStyles.title),
+      body: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Center(
+          child: Text('Home', style: textTheme.titleLarge),
+        ),
       ),
     );
   }
