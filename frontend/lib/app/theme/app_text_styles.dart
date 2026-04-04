@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Typography scale (DDS §8.4). Base styles without color — color comes from [TextTheme] / [ColorScheme].
 ///
@@ -54,4 +55,31 @@ abstract final class AppTextStyles {
       bodySmall: textCaption.copyWith(color: onSurfaceVariant),
     );
   }
+}
+
+/// Orbitron + cyan stacked glow for "SYNAXIS" (home) and screen headers ("CREATE ROOM", etc.).
+abstract final class SynaxisNeonTitleStyles {
+  static const List<Shadow> glowShadows = [
+    Shadow(color: Color(0xFF00FFFF), blurRadius: 4.0),
+    Shadow(color: Color(0xFF00FFFF), blurRadius: 12.0),
+  ];
+
+  /// Game name on [HomeScreen] — e.g. "SYNAXIS".
+  static TextStyle gameName({double letterSpacing = 4}) => GoogleFonts.orbitron(
+    fontSize: 34,
+    fontWeight: FontWeight.bold,
+    letterSpacing: letterSpacing,
+    color: Colors.white,
+    shadows: glowShadows,
+  );
+
+  /// Feature screen title — e.g. "CREATE ROOM".
+  static TextStyle screenTitle({double letterSpacing = 3}) =>
+      GoogleFonts.orbitron(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        letterSpacing: letterSpacing,
+        color: Colors.white,
+        shadows: glowShadows,
+      );
 }

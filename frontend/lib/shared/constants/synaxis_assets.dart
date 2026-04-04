@@ -1,5 +1,5 @@
-/// Image paths for [HomeScreen] (replace placeholder PNGs in `assets/images/`).
-abstract final class HomeScreenAssets {
+/// Image paths for sci-fi screens (Home, Create Room, …).
+abstract final class SynaxisAssets {
   static const String logo = 'assets/images/logo.png';
   static const String backgroundPattern =
       'assets/images/background_pattern.png';

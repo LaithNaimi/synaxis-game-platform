@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../app/router/route_names.dart';
 import '../../../../app/theme/app_spacing.dart';
+import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/home_screen_theme.dart';
-import '../home_assets.dart';
+import '../../../../shared/constants/synaxis_assets.dart';
+import '../../../../shared/widgets/synaxis_sci_fi_background.dart';
 
 /// Minimum tap height for primary/secondary CTAs (Material / a11y).
 const double _kHomeCtaMinHeight = 48;
@@ -21,56 +22,34 @@ class HomeScreen extends StatelessWidget {
         Theme.of(context).extension<HomeScreenTheme>() ??
         HomeScreenTheme.synaxis;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: home.backgroundDeepNavy,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-      child: Scaffold(
-        backgroundColor: home.backgroundDeepNavy,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            ColoredBox(color: home.backgroundDeepNavy),
-            Positioned.fill(
-              child: Image.asset(
-                HomeScreenAssets.backgroundPattern,
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                filterQuality: FilterQuality.medium,
-              ),
-            ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 560),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _SynaxisTitle(home: home),
-                        const SizedBox(height: AppSpacing.md),
-                        Semantics(
-                          label: 'Synaxis logo',
-                          child: Image.asset(
-                            HomeScreenAssets.logo,
-                            height: 96,
-                            filterQuality: FilterQuality.high,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xl),
-                        _CreateRoomButton(home: home),
-                        const SizedBox(height: AppSpacing.md),
-                        _JoinRoomButton(home: home),
-                      ],
+    return SynaxisSciFiBackground(
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const _SynaxisTitle(),
+                  const SizedBox(height: AppSpacing.md),
+                  Semantics(
+                    label: 'Synaxis logo',
+                    child: Image.asset(
+                      SynaxisAssets.logo,
+                      height: 96,
+                      filterQuality: FilterQuality.high,
                     ),
                   ),
-                ),
+                  const SizedBox(height: AppSpacing.xl),
+                  _CreateRoomButton(home: home),
+                  const SizedBox(height: AppSpacing.md),
+                  _JoinRoomButton(home: home),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -78,34 +57,14 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _SynaxisTitle extends StatelessWidget {
-  const _SynaxisTitle({required this.home});
-
-  final HomeScreenTheme home;
+  const _SynaxisTitle();
 
   @override
   Widget build(BuildContext context) {
-    final baseStyle = GoogleFonts.orbitron(
-      fontSize: 36,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 4,
-      color: home.onPrimaryText,
-    );
-
     return Text(
       'SYNAXIS',
       textAlign: TextAlign.center,
-      style: baseStyle.copyWith(
-        shadows: [
-          Shadow(
-            color: home.titleGlowColor.withValues(alpha: 0.95),
-            blurRadius: 24,
-          ),
-          Shadow(
-            color: home.titleGlowColor.withValues(alpha: 0.55),
-            blurRadius: 48,
-          ),
-        ],
-      ),
+      style: SynaxisNeonTitleStyles.gameName(),
     );
   }
 }

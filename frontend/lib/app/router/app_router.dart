@@ -24,8 +24,7 @@ GoRouter createAppRouter() {
       ),
       GoRoute(
         path: RouteNames.createRoom,
-        builder: (context, _) =>
-            const AppPageShell(title: 'Create room', child: CreateRoomScreen()),
+        builder: (context, _) => const CreateRoomScreen(),
       ),
       GoRoute(
         path: RouteNames.joinRoom,
