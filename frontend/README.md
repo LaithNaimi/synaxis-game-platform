@@ -16,7 +16,9 @@ flutter run
 
 ## CI checks (run before pushing / opening a PR)
 
-From the `frontend` directory:
+From the `frontend` directory (mirrors **FE-001.5** / GitHub Actions):
+
+**Bash**
 
 ```bash
 flutter pub get
@@ -25,7 +27,16 @@ flutter analyze
 flutter test
 ```
 
-The same steps run in GitHub Actions (`.github/workflows/flutter_ci.yml`) on changes under `frontend/`.
+**PowerShell (Windows)**
+
+```powershell
+flutter pub get
+dart format --set-exit-if-changed .
+flutter analyze
+flutter test
+```
+
+The same steps run in GitHub Actions (`.github/workflows/flutter_ci.yml`) when `frontend/**` or the workflow file changes.
 
 ## Configuration
 

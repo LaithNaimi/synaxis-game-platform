@@ -1,6 +1,13 @@
 # Frontend: format, analyze, test (FE-001.5 / task breakdown §5.1).
 name: Flutter CI
 
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main, master, develop]
@@ -12,6 +19,7 @@ on:
     paths:
       - 'frontend/**'
       - '.github/workflows/flutter_ci.yml'
+  workflow_dispatch:
 
 defaults:
   run:
