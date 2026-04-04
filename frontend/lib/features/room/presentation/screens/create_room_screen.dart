@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../app/router/route_names.dart';
+import '../../../../app/router/synaxis_pop_or_home.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/home_screen_theme.dart';
-import '../../../../shared/widgets/synaxis_sci_fi_background.dart';
-import '../../../../shared/widgets/synaxis_sci_fi_input_decoration.dart';
+import '../../../../shared/widgets/synaxis_room_form_layout.dart';
+import '../../../../shared/widgets/synaxis_room_player_name_field.dart';
 import '../create_room_constants.dart';
 import '../create_room_validators.dart';
 import '../widgets/create_room_cefr_dropdown.dart';
@@ -70,131 +69,80 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
       color: home.onPrimaryText.withValues(alpha: 0.95),
     );
 
-    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-
-    return SynaxisSciFiBackground(
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(bottom: bottomInset),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              CreateRoomBackBar(
-                home: home,
-                onBack: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.go(RouteNames.home);
-                  }
-                },
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                  ),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 560),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const CreateRoomTitleLogoBlock(),
-                            const SizedBox(height: AppSpacing.lg),
-                            CreateRoomFormSectionLabel(
-                              text: 'PLAYER NAME',
-                              labelTextStyle: labelTextStyle,
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            TextFormField(
-                              controller: _nameController,
-                              maxLength: kCreateRoomPlayerNameMaxLength,
-                              maxLines: 1,
-                              style: labelTextStyle,
-                              cursorColor: home.accentCyan,
-                              decoration: synaxisSciFiInputDecoration(
-                                home,
-                                hint: 'Enter your nickname',
-                              ).copyWith(counterText: ''),
-                              validator: validateCreateRoomPlayerName,
-                              onChanged: (_) => setState(() {}),
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                            CreateRoomFormSectionLabel(
-                              text: 'CEFR LEVEL',
-                              labelTextStyle: labelTextStyle,
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            CreateRoomCefrDropdown(
-                              home: home,
-                              value: _cefr,
-                              labelTextStyle: labelTextStyle,
-                              onChanged: (v) => setState(() => _cefr = v),
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                            CreateRoomFormSectionLabel(
-                              text: 'MAXIMUM PLAYERS',
-                              labelTextStyle: labelTextStyle,
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            CreateRoomDigitsTextField(
-                              controller: _maxPlayersController,
-                              home: home,
-                              labelTextStyle: labelTextStyle,
-                              hint: '2–8',
-                              validator: validateCreateRoomMaxPlayers,
-                              onChanged: (_) => setState(() {}),
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                            CreateRoomFormSectionLabel(
-                              text: 'NUMBER OF ROUNDS',
-                              labelTextStyle: labelTextStyle,
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            CreateRoomDigitsTextField(
-                              controller: _roundsController,
-                              home: home,
-                              labelTextStyle: labelTextStyle,
-                              hint: '1–$kCreateRoomMaxTotalRounds',
-                              validator: validateCreateRoomTotalRounds,
-                              onChanged: (_) => setState(() {}),
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                            CreateRoomFormSectionLabel(
-                              text: 'ROUND TIME (SECONDS)',
-                              labelTextStyle: labelTextStyle,
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            CreateRoomDigitsTextField(
-                              controller: _durationSecController,
-                              home: home,
-                              labelTextStyle: labelTextStyle,
-                              hint: '15–180',
-                              validator: validateCreateRoomRoundDurationSec,
-                              onChanged: (_) => setState(() {}),
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            CreateRoomSubmitBar(
-                              home: home,
-                              canSubmit: _canSubmit,
-                              onSubmit: _onSubmit,
-                              minHeight: _submitMinHeight,
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+    return SynaxisRoomFormShell(
+      formKey: _formKey,
+      home: home,
+      onBack: () => synaxisPopOrGoHome(context),
+      children: [
+        const SynaxisTitleLogoBlock(),
+        const SizedBox(height: AppSpacing.lg),
+        SynaxisRoomPlayerNameField(
+          controller: _nameController,
+          home: home,
+          labelTextStyle: labelTextStyle,
+          maxLength: kCreateRoomPlayerNameMaxLength,
+          validator: validateCreateRoomPlayerName,
+          onChanged: (_) => setState(() {}),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        SynaxisLabeledSciFiField(
+          label: 'CEFR LEVEL',
+          labelTextStyle: labelTextStyle,
+          field: CreateRoomCefrDropdown(
+            home: home,
+            value: _cefr,
+            labelTextStyle: labelTextStyle,
+            onChanged: (v) => setState(() => _cefr = v),
           ),
         ),
-      ),
+        const SizedBox(height: AppSpacing.lg),
+        SynaxisLabeledSciFiField(
+          label: 'MAXIMUM PLAYERS',
+          labelTextStyle: labelTextStyle,
+          field: CreateRoomDigitsTextField(
+            controller: _maxPlayersController,
+            home: home,
+            labelTextStyle: labelTextStyle,
+            hint: '2–8',
+            validator: validateCreateRoomMaxPlayers,
+            onChanged: (_) => setState(() {}),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        SynaxisLabeledSciFiField(
+          label: 'NUMBER OF ROUNDS',
+          labelTextStyle: labelTextStyle,
+          field: CreateRoomDigitsTextField(
+            controller: _roundsController,
+            home: home,
+            labelTextStyle: labelTextStyle,
+            hint: '1–$kCreateRoomMaxTotalRounds',
+            validator: validateCreateRoomTotalRounds,
+            onChanged: (_) => setState(() {}),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        SynaxisLabeledSciFiField(
+          label: 'ROUND TIME (SECONDS)',
+          labelTextStyle: labelTextStyle,
+          field: CreateRoomDigitsTextField(
+            controller: _durationSecController,
+            home: home,
+            labelTextStyle: labelTextStyle,
+            hint: '15–180',
+            validator: validateCreateRoomRoundDurationSec,
+            onChanged: (_) => setState(() {}),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        CreateRoomSubmitBar(
+          home: home,
+          canSubmit: _canSubmit,
+          onSubmit: _onSubmit,
+          minHeight: _submitMinHeight,
+        ),
+        const SizedBox(height: AppSpacing.lg),
+      ],
     );
   }
 }

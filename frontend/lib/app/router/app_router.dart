@@ -28,8 +28,7 @@ GoRouter createAppRouter() {
       ),
       GoRoute(
         path: RouteNames.joinRoom,
-        builder: (context, _) =>
-            const AppPageShell(title: 'Join room', child: JoinRoomScreen()),
+        builder: (context, _) => const JoinRoomScreen(),
       ),
       GoRoute(
         path: RouteNames.lobby,
