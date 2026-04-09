@@ -1,32 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../shared/widgets/nebula_background.dart';
+import '../../shared/widgets/synaxis_app_bar.dart';
 import 'route_names.dart';
 
-/// Consistent scaffold + AppBar for non-home MVP routes (FE-001.3).
-/// Session guards / redirects attach later at [GoRouter] level (DDS §7).
+/// Scaffold wrapper with [SynaxisAppBar] and [NebulaBackground] for non-home routes.
+///
+/// Provides consistent dark-space aesthetic across all screens.
 class AppPageShell extends StatelessWidget {
-  const AppPageShell({super.key, required this.title, required this.child});
+  const AppPageShell({
+    super.key,
+    required this.title,
+    required this.child,
+    this.showBackButton = true,
+    this.appBarTrailing,
+    this.appBarCenterContent,
+  });
 
   final String title;
   final Widget child;
+  final bool showBackButton;
+  final Widget? appBarTrailing;
+  final Widget? appBarCenterContent;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go(RouteNames.home);
-            }
-          },
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      body: NebulaBackground(
+        child: Column(
+          children: [
+            SynaxisAppBar(
+              title: title,
+              showBackButton: showBackButton,
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(RouteNames.home);
+                }
+              },
+              trailing: appBarTrailing,
+              centerContent: appBarCenterContent,
+            ),
+            Expanded(child: child),
+          ],
         ),
-        title: Text(title),
       ),
-      body: child,
     );
   }
 }

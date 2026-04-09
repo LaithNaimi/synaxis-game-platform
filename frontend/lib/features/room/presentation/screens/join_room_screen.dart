@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../app/router/synaxis_pop_or_home.dart';
+import '../../../../app/router/route_names.dart';
+import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
-import '../../../../app/theme/home_screen_theme.dart';
-import '../../../../shared/widgets/synaxis_room_form_layout.dart';
-import '../../../../shared/widgets/synaxis_room_player_name_field.dart';
-import '../create_room_constants.dart';
-import '../join_room_constants.dart';
-import '../join_room_validators.dart';
-import '../widgets/create_room_form_widgets.dart';
-import '../widgets/join_room_code_field.dart';
+import '../../../../app/theme/app_text_styles.dart';
+import '../../../../shared/widgets/glassmorphic_panel.dart';
+import '../../../../shared/widgets/glow_button.dart';
+import '../../../../shared/widgets/nebula_background.dart';
+import '../../../../shared/widgets/synaxis_app_bar.dart';
+import '../../../../shared/widgets/synaxis_text_field.dart';
 
-/// Join room form — player name + room code (DDS §15.3); submit wired in FE-002.5.
+/// Join room form — player name + room code (DDS §27.2).
 class JoinRoomScreen extends StatefulWidget {
   const JoinRoomScreen({super.key});
 
@@ -20,11 +20,10 @@ class JoinRoomScreen extends StatefulWidget {
 }
 
 class _JoinRoomScreenState extends State<JoinRoomScreen> {
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _codeController = TextEditingController();
 
-  static const double _submitMinHeight = 48;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -33,67 +32,169 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
     super.dispose();
   }
 
-  bool get _canSubmit {
-    final name = _nameController.text.trim();
-    if (name.isEmpty || name.length > kCreateRoomPlayerNameMaxLength) {
-      return false;
-    }
-    final code = _codeController.text.trim().toUpperCase();
-    if (code.length != kJoinRoomCodeLength) return false;
-    if (!RegExp('^[A-Z0-9]{${kJoinRoomCodeLength}}\$').hasMatch(code)) {
-      return false;
-    }
-    return true;
-  }
-
-  void _onSubmit() {
-    if (!_canSubmit) return;
-    final valid = _formKey.currentState?.validate() ?? false;
-    if (!valid) return;
-    // FE-002.5 — POST join room.
-  }
-
   @override
   Widget build(BuildContext context) {
-    final home =
-        Theme.of(context).extension<HomeScreenTheme>() ??
-        HomeScreenTheme.synaxis;
-    final labelTextStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-      color: home.onPrimaryText.withValues(alpha: 0.95),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: SynaxisAppBar(onBack: () => context.go(RouteNames.home)),
+      body: NebulaBackground(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: AppSpacing.maxContentWidth,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: AppSpacing.lg),
+                        _buildHeader(),
+                        const SizedBox(height: AppSpacing.lg),
+                        _buildForm(),
+                        const SizedBox(height: AppSpacing.xxl),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
+  }
 
-    return SynaxisRoomFormShell(
-      formKey: _formKey,
-      home: home,
-      onBack: () => synaxisPopOrGoHome(context),
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SynaxisTitleLogoBlock(title: 'JOIN ROOM'),
-        const SizedBox(height: AppSpacing.lg),
-        SynaxisRoomPlayerNameField(
-          controller: _nameController,
-          home: home,
-          labelTextStyle: labelTextStyle,
-          maxLength: kCreateRoomPlayerNameMaxLength,
-          validator: validateJoinRoomPlayerName,
-          onChanged: (_) => setState(() {}),
+        Text(
+          'Join the Hearth',
+          style: AppTextStyles.title.copyWith(color: AppColors.onSurface),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        JoinRoomCodeField(
-          controller: _codeController,
-          home: home,
-          labelTextStyle: labelTextStyle,
-          onChanged: (_) => setState(() {}),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Enter your credentials to enter the cosmic session.',
+          style: AppTextStyles.body.copyWith(color: AppColors.onSurfaceVariant),
         ),
-        const SizedBox(height: AppSpacing.xl),
-        CreateRoomSubmitBar(
-          home: home,
-          canSubmit: _canSubmit,
-          onSubmit: _onSubmit,
-          buttonLabel: 'JOIN ROOM',
-          minHeight: _submitMinHeight,
-        ),
-        const SizedBox(height: AppSpacing.lg),
       ],
     );
+  }
+
+  Widget _buildForm() {
+    return GlassmorphicPanel(
+      child: Column(
+        children: [
+          // Player Name
+          SynaxisTextField(
+            label: 'Player Name',
+            hint: 'e.g. Starchild_01',
+            controller: _nameController,
+            suffixIcon: Icons.person,
+            textCapitalization: TextCapitalization.words,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 14,
+                color: AppColors.secondary.withValues(alpha: 0.7),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                'Visible to other travelers in the room.',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.secondary.withValues(alpha: 0.7),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: AppSpacing.lg),
+
+          // Room Code
+          _buildRoomCodeField(),
+
+          const SizedBox(height: AppSpacing.xl),
+
+          // Submit
+          GlowButton(
+            label: 'Join Room',
+            icon: Icons.rocket_launch,
+            isLoading: _isLoading,
+            onPressed: _isLoading ? null : _onJoinRoom,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoomCodeField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'ROOM CODE',
+          style: AppTextStyles.labelUppercase.copyWith(
+            color: AppColors.primary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        TextFormField(
+          controller: _codeController,
+          maxLength: 6,
+          textAlign: TextAlign.center,
+          textCapitalization: TextCapitalization.characters,
+          style: AppTextStyles.display.copyWith(
+            color: AppColors.primary,
+            letterSpacing: 12,
+            fontWeight: FontWeight.w700,
+          ),
+          decoration: InputDecoration(
+            hintText: 'X7R2KL',
+            counterText: '',
+            hintStyle: AppTextStyles.display.copyWith(
+              color: AppColors.outline.withValues(alpha: 0.4),
+              letterSpacing: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.verified_user,
+                size: 14,
+                color: AppColors.secondary,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                'ENCRYPTED PORTAL',
+                style: AppTextStyles.micro.copyWith(
+                  color: AppColors.secondary,
+                  letterSpacing: 2,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _onJoinRoom() async {
+    setState(() => _isLoading = true);
+    await Future<void>.delayed(const Duration(seconds: 1));
+    if (!mounted) return;
+    setState(() => _isLoading = false);
   }
 }

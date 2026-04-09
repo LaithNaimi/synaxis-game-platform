@@ -9,8 +9,6 @@ import 'package:synaxis/features/home/presentation/screens/home_screen.dart';
 import 'package:synaxis/features/leaderboard/presentation/screens/final_leaderboard_screen.dart';
 import 'package:synaxis/features/leaderboard/presentation/screens/round_leaderboard_screen.dart';
 import 'package:synaxis/features/learning/presentation/screens/learning_reveal_screen.dart';
-import 'package:synaxis/features/room/presentation/screens/create_room_screen.dart';
-import 'package:synaxis/features/room/presentation/screens/join_room_screen.dart';
 import 'package:synaxis/features/room/presentation/screens/lobby_screen.dart';
 
 /// FE-001.3 — every DDS §7.1 path resolves and shows its placeholder body.
@@ -23,8 +21,6 @@ void main() {
 
     final expectedTypes = <String, Type>{
       RouteNames.home: HomeScreen,
-      RouteNames.createRoom: CreateRoomScreen,
-      RouteNames.joinRoom: JoinRoomScreen,
       RouteNames.lobby: LobbyScreen,
       RouteNames.countdown: CountdownScreen,
       RouteNames.game: GameScreen,
@@ -38,6 +34,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(entry.value), findsOneWidget, reason: entry.key);
     }
+
+    router.go(RouteNames.createRoom);
+    await tester.pumpAndSettle();
+    expect(find.text('Create room (placeholder)'), findsOneWidget);
+
+    router.go(RouteNames.joinRoom);
+    await tester.pumpAndSettle();
+    expect(find.text('Join room (placeholder)'), findsOneWidget);
   });
 
   testWidgets('unknown path uses errorBuilder', (tester) async {

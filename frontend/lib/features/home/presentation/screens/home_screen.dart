@@ -1,51 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../app/router/route_names.dart';
+import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
-import '../../../../app/theme/home_screen_theme.dart';
-import '../../../../shared/constants/synaxis_assets.dart';
-import '../../../../shared/widgets/synaxis_sci_fi_background.dart';
+import '../../../../shared/widgets/glow_button.dart';
+import '../../../../shared/widgets/nebula_background.dart';
+import '../../../../shared/widgets/outline_glow_button.dart';
+import '../../../../shared/widgets/synaxis_app_bar.dart';
 
-/// Minimum tap height for primary/secondary CTAs (Material / a11y).
-const double _kHomeCtaMinHeight = 48;
-
-/// Entry screen — dark sci-fi layout with Orbitron + branded assets.
+/// Landing screen — pure navigation, zero network calls (DDS §27.1).
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final home =
-        Theme.of(context).extension<HomeScreenTheme>() ??
-        HomeScreenTheme.synaxis;
-
-    return SynaxisSciFiBackground(
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      appBar: SynaxisAppBar(
+        showBackButton: false,
+        trailing: IconButton(
+          icon: const Icon(
+            Icons.timer_outlined,
+            color: AppColors.primary,
+            size: 22,
+          ),
+          onPressed: () {},
+          splashRadius: 20,
+        ),
+      ),
+      body: NebulaBackground(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 560),
+              constraints: const BoxConstraints(
+                maxWidth: AppSpacing.maxContentWidth,
+              ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const _SynaxisTitle(),
-                  const SizedBox(height: AppSpacing.md),
-                  Semantics(
-                    label: 'Synaxis logo',
-                    child: Image.asset(
-                      SynaxisAssets.logo,
-                      height: 96,
-                      filterQuality: FilterQuality.high,
-                    ),
+                  // Space for app bar
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.top +
+                        AppSpacing.xxl +
+                        AppSpacing.lg,
                   ),
-                  const SizedBox(height: AppSpacing.xl),
-                  _CreateRoomButton(home: home),
+
+                  // ── "THE ETHEREAL HEARTH" badge ────────
+                  _buildEtherealBadge(),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  // ── SYNAXIS hero title with glow ───────
+                  _buildHeroTitle(),
+
                   const SizedBox(height: AppSpacing.md),
-                  _JoinRoomButton(home: home),
+
+                  // ── Tagline paragraph ──────────────────
+                  _buildTagline(),
+
+                  const SizedBox(height: AppSpacing.xxl),
+
+                  // ── Create Room CTA ────────────────────
+                  GlowButton(
+                    label: 'Create Room',
+                    onPressed: () => context.go(RouteNames.createRoom),
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  // ── Join Room CTA ──────────────────────
+                  OutlineGlowButton(
+                    label: 'Join Room',
+                    onPressed: () => context.go(RouteNames.joinRoom),
+                  ),
+
+                  const SizedBox(height: AppSpacing.xxl),
                 ],
               ),
             ),
@@ -54,86 +86,66 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class _SynaxisTitle extends StatelessWidget {
-  const _SynaxisTitle();
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'SYNAXIS',
-      textAlign: TextAlign.center,
-      style: SynaxisNeonTitleStyles.gameName(),
-    );
-  }
-}
-
-class _CreateRoomButton extends StatelessWidget {
-  const _CreateRoomButton({required this.home});
-
-  final HomeScreenTheme home;
-
-  @override
-  Widget build(BuildContext context) {
-    final labelStyle = GoogleFonts.orbitron(
-      fontSize: 14,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 1.5,
-      color: home.onPrimaryText,
-    );
-
-    return SizedBox(
-      width: double.infinity,
-      height: _kHomeCtaMinHeight,
-      child: FilledButton(
-        onPressed: () => context.go(RouteNames.createRoom),
-        style: FilledButton.styleFrom(
-          backgroundColor: home.primaryButtonTeal,
-          foregroundColor: home.onPrimaryText,
-          elevation: 6,
-          shadowColor: home.accentCyan.withValues(alpha: 0.45),
-          minimumSize: const Size.fromHeight(_kHomeCtaMinHeight),
-          tapTargetSize: MaterialTapTargetSize.padded,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
+  // ── Ethereal Hearth badge ────────────────────────────────────────
+  // Gradient-border pill chip: outer container is the gradient,
+  // inner container is the solid fill, creating a border effect.
+  Widget _buildEtherealBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs + 2,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadius.full),
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.1),
         ),
-        child: Text('CREATE ROOM', style: labelStyle),
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primaryGlow,
+            AppColors.primaryContainer.withValues(alpha: 0.2),
+            AppColors.primaryGlow,
+          ],
+        ),
+      ),
+      child: Text(
+        'THE ETHEREAL HEARTH',
+        style: AppTextStyles.labelUppercase.copyWith(
+          color: AppColors.primary,
+          fontSize: 12,
+        ),
       ),
     );
   }
-}
 
-class _JoinRoomButton extends StatelessWidget {
-  const _JoinRoomButton({required this.home});
-
-  final HomeScreenTheme home;
-
-  @override
-  Widget build(BuildContext context) {
-    final labelStyle = GoogleFonts.orbitron(
-      fontSize: 14,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 1.5,
-      color: home.onPrimaryText,
+  // ── SYNAXIS hero title ───────────────────────────────────────────
+  // Large Space Grotesk text with soft cyan text-shadow glow.
+  Widget _buildHeroTitle() {
+    return Text(
+      'SYNAXIS',
+      textAlign: TextAlign.center,
+      style: AppTextStyles.heroDisplay.copyWith(
+        color: AppColors.onSurface,
+        shadows: const [
+          Shadow(color: AppColors.primaryGlow, blurRadius: 15),
+          Shadow(color: AppColors.primaryGlow, blurRadius: 40),
+        ],
+      ),
     );
+  }
 
-    return SizedBox(
-      width: double.infinity,
-      height: _kHomeCtaMinHeight,
-      child: OutlinedButton(
-        onPressed: () => context.go(RouteNames.joinRoom),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: home.onPrimaryText,
-          side: BorderSide(color: home.accentCyan, width: 1.5),
-          minimumSize: const Size.fromHeight(_kHomeCtaMinHeight),
-          tapTargetSize: MaterialTapTargetSize.padded,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-        ),
-        child: Text('JOIN ROOM', style: labelStyle),
+  // ── Tagline ──────────────────────────────────────────────────────
+  Widget _buildTagline() {
+    return Text(
+      'Connect in the quiet corners of the galaxy. '
+      'A soft-futuristic social space designed for '
+      'meaningful play and shared serenity.',
+      textAlign: TextAlign.center,
+      style: AppTextStyles.body.copyWith(
+        color: AppColors.onSurfaceVariant,
+        fontSize: 17,
+        height: 1.6,
       ),
     );
   }
