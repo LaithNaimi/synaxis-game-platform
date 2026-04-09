@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Auto-generated plugin registrations (machine-specific)
+**/generated_plugins.cmake
+**/generated_plugin_registrant.*
+.flutter-plugins
