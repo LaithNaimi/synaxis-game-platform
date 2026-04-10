@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Synaxis - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#f9f9ff",
+                        "surface-dim": "#0b0e14",
+                        "tertiary-dim": "#85e3ef",
+                        "error-container": "#9f0519",
+                        "surface": "#0b0e14",
+                        "on-primary-fixed-variant": "#005b66",
+                        "secondary": "#96a5ff",
+                        "inverse-primary": "#006975",
+                        "on-primary": "#00515b",
+                        "on-tertiary": "#00646d",
+                        "on-error-container": "#ffa8a3",
+                        "primary-container": "#1cc2d6",
+                        "on-secondary-container": "#c7cdff",
+                        "error-dim": "#d7383b",
+                        "on-secondary-fixed": "#1a2b7e",
+                        "on-tertiary-fixed-variant": "#00666f",
+                        "on-primary-container": "#00363d",
+                        "tertiary-container": "#93f1fd",
+                        "surface-container-high": "#1c2028",
+                        "tertiary-fixed-dim": "#85e3ef",
+                        "secondary-fixed-dim": "#b7c0ff",
+                        "surface-tint": "#58e7fb",
+                        "on-background": "#ecedf6",
+                        "primary-fixed": "#58e7fb",
+                        "primary-fixed-dim": "#45d8ed",
+                        "tertiary-fixed": "#93f1fd",
+                        "on-secondary": "#0f2176",
+                        "primary-dim": "#45d8ed",
+                        "on-primary-fixed": "#003c44",
+                        "background": "#0b0e14",
+                        "on-tertiary-fixed": "#00474d",
+                        "tertiary": "#ccf9ff",
+                        "on-tertiary-container": "#005b63",
+                        "on-surface-variant": "#a9abb3",
+                        "inverse-on-surface": "#52555c",
+                        "on-surface": "#ecedf6",
+                        "secondary-container": "#2f3f92",
+                        "surface-container-low": "#10131a",
+                        "surface-variant": "#22262f",
+                        "secondary-fixed": "#c9cfff",
+                        "on-error": "#490006",
+                        "surface-bright": "#282c36",
+                        "error": "#ff716c",
+                        "outline": "#73757d",
+                        "outline-variant": "#45484f",
+                        "secondary-dim": "#8998f0",
+                        "surface-container": "#161a21",
+                        "surface-container-highest": "#22262f",
+                        "on-secondary-fixed-variant": "#3a499c",
+                        "primary": "#58e7fb",
+                        "surface-container-lowest": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-glow-primary {
+            text-shadow: 0 0 15px rgba(88, 231, 251, 0.4);
+        }
+        .nebula-bg {
+            background: radial-gradient(circle at 50% 50%, #161a21 0%, #0b0e14 100%);
+            background-attachment: fixed;
+        }
+        .grid-overlay {
+            background-image: linear-gradient(rgba(88, 231, 251, 0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(88, 231, 251, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden nebula-bg">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between bg-cyan-900/60 backdrop-blur-xl dark:bg-cyan-950/60 rounded-full mt-4 mx-4 px-6 h-14 shadow-[0_0_20px_rgba(38,198,218,0.15)] max-w-[calc(100%-2rem)]">
+<div class="flex items-center gap-4">
+<button class="text-cyan-400 dark:text-cyan-300 active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Space_Grotesk'] tracking-[0.2em] uppercase text-sm font-bold text-cyan-400 dark:text-cyan-300">Synaxis</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-cyan-400 dark:text-cyan-300 active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+</button>
+</div>
+</header>
+<main class="relative pt-32 pb-40 min-h-screen px-6">
+<!-- Subtle Ambient Grid Background -->
+<div class="fixed inset-0 grid-overlay pointer-events-none opacity-40"></div>
+<!-- Hero Section -->
+<div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center">
+<div class="mb-8 p-1 rounded-full bg-gradient-to-r from-primary/20 via-primary-container/20 to-primary/20 backdrop-blur-sm border border-outline-variant/10">
+<span class="px-4 py-1 text-xs font-bold tracking-widest text-primary uppercase font-headline">The Ethereal Hearth</span>
+</div>
+<h1 class="font-headline text-6xl md:text-8xl font-bold tracking-tighter text-on-surface mb-6 soft-glow-primary">
+                SYNAXIS
+            </h1>
+<p class="font-body text-on-surface-variant text-lg md:text-xl max-w-2xl mb-12 leading-relaxed">
+                Connect in the quiet corners of the galaxy. A soft-futuristic social space designed for meaningful play and shared serenity.
+            </p>
+<div class="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto">
+<button class="group relative w-full sm:w-64 px-8 py-4 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold tracking-wide transition-all active:scale-95 shadow-[0_0_30px_rgba(88,231,251,0.2)]">
+                    Create Room
+                </button>
+<button class="w-full sm:w-64 px-8 py-4 rounded-full border-2 border-primary/30 text-primary font-bold tracking-wide bg-surface-container-high/40 backdrop-blur-md hover:bg-primary/5 transition-all active:scale-95">
+                    Join Room
+                </button>
+</div>
+</div>
+<!-- Featured Content / Social Proof -->
+<!-- Bottom Grid Pattern Section -->
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 py-4 bg-slate-900/80 backdrop-blur-2xl dark:bg-slate-950/80 rounded-t-[3rem] shadow-[0_-10px_40px_rgba(38,198,218,0.06)]">
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-cyan-400 to-cyan-600 text-slate-900 rounded-full px-5 py-2 shadow-[0_0_15px_rgba(38,198,218,0.4)] active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold mt-1">Ranks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold mt-1">System</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold mt-1">Leave</span>
+</a>
+</nav>
+<!-- Floating Action Button (FAB) - Suppressed as per context of Home screen landing -->
+</body></html>

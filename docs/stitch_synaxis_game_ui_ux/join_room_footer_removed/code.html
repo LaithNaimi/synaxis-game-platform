@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html class="dark" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#f9f9ff",
+                        "surface-dim": "#0b0e14",
+                        "tertiary-dim": "#85e3ef",
+                        "error-container": "#9f0519",
+                        "surface": "#0b0e14",
+                        "on-primary-fixed-variant": "#005b66",
+                        "secondary": "#96a5ff",
+                        "inverse-primary": "#006975",
+                        "on-primary": "#00515b",
+                        "on-tertiary": "#00646d",
+                        "on-error-container": "#ffa8a3",
+                        "primary-container": "#1cc2d6",
+                        "on-secondary-container": "#c7cdff",
+                        "error-dim": "#d7383b",
+                        "on-secondary-fixed": "#1a2b7e",
+                        "on-tertiary-fixed-variant": "#00666f",
+                        "on-primary-container": "#00363d",
+                        "tertiary-container": "#93f1fd",
+                        "surface-container-high": "#1c2028",
+                        "tertiary-fixed-dim": "#85e3ef",
+                        "secondary-fixed-dim": "#b7c0ff",
+                        "surface-tint": "#58e7fb",
+                        "on-background": "#ecedf6",
+                        "primary-fixed": "#58e7fb",
+                        "primary-fixed-dim": "#45d8ed",
+                        "tertiary-fixed": "#93f1fd",
+                        "on-secondary": "#0f2176",
+                        "primary-dim": "#45d8ed",
+                        "on-primary-fixed": "#003c44",
+                        "background": "#0b0e14",
+                        "on-tertiary-fixed": "#00474d",
+                        "tertiary": "#ccf9ff",
+                        "on-tertiary-container": "#005b63",
+                        "on-surface-variant": "#a9abb3",
+                        "inverse-on-surface": "#52555c",
+                        "on-surface": "#ecedf6",
+                        "secondary-container": "#2f3f92",
+                        "surface-container-low": "#10131a",
+                        "surface-variant": "#22262f",
+                        "secondary-fixed": "#c9cfff",
+                        "on-error": "#490006",
+                        "surface-bright": "#282c36",
+                        "error": "#ff716c",
+                        "outline": "#73757d",
+                        "outline-variant": "#45484f",
+                        "secondary-dim": "#8998f0",
+                        "surface-container": "#161a21",
+                        "surface-container-highest": "#22262f",
+                        "on-secondary-fixed-variant": "#3a499c",
+                        "primary": "#58e7fb",
+                        "surface-container-lowest": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0e14;
+        }
+        .glass-panel {
+            background: rgba(34, 38, 47, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: 100dvh;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col overflow-hidden relative">
+<!-- Background Ambient Glows - Fixed positioning to stay behind content -->
+<div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+<div class="fixed bottom-0 -left-10 w-64 h-64 bg-secondary/5 blur-[100px] rounded-full pointer-events-none z-0"></div>
+<div class="fixed top-0 -right-10 w-80 h-80 bg-primary/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+<!-- TopAppBar - Absolute positioning at top -->
+<header class="absolute top-0 left-0 w-full z-50 flex items-center justify-between bg-cyan-900/60 backdrop-blur-xl dark:bg-cyan-950/60 rounded-full mt-4 mx-0 sm:mx-4 px-6 h-14 shadow-[0_0_20px_rgba(38,198,218,0.15)] max-w-[calc(100%-2rem)] left-1/2 -translate-x-1/2">
+<div class="flex items-center gap-4">
+<button class="text-cyan-400 dark:text-cyan-300 active:scale-95 duration-200 hover:bg-cyan-400/10 p-2 rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+</div>
+<h1 class="font-['Space_Grotesk'] tracking-wide uppercase text-sm font-bold text-cyan-400 dark:text-cyan-300 tracking-[0.2em]">Synaxis</h1>
+<div class="flex items-center gap-4">
+<button class="text-cyan-400 dark:text-cyan-300 active:scale-95 duration-200 hover:bg-cyan-400/10 p-2 rounded-full">
+<span class="material-symbols-outlined">timer</span>
+</button>
+</div>
+</header>
+<!-- Main Content - Centered Container -->
+<main class="flex-grow flex items-center justify-center px-6 relative z-10 w-full h-full">
+<!-- Entry Form Card -->
+<div class="w-full max-w-md">
+<div class="mb-8 text-center">
+<h2 class="font-headline text-4xl font-bold text-on-surface mb-3 tracking-tight">Join the Hearth</h2>
+<p class="text-on-surface-variant font-body text-base max-w-[280px] mx-auto opacity-80">Enter your credentials to enter the cosmic session.</p>
+</div>
+<!-- Glass Container -->
+<div class="glass-panel p-8 rounded-xl border border-outline-variant/10 shadow-2xl space-y-8">
+<!-- Player Name Field -->
+<div class="space-y-3">
+<label class="block text-xs font-bold text-primary px-1 tracking-[0.15em] uppercase">Player Name</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-low border-none rounded-lg px-5 py-4 text-on-surface placeholder:text-outline/50 focus:ring-2 focus:ring-primary/40 transition-all duration-300 outline-none" placeholder="e.g. Starchild_01" type="text"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary/40">person</span>
+</div>
+</div>
+<div class="flex items-center gap-2 px-1 text-[11px] text-secondary-dim opacity-70">
+<span class="material-symbols-outlined text-sm">info</span>
+<span>Visible to other travelers in the room.</span>
+</div>
+</div>
+<!-- Room Code Field -->
+<div class="space-y-3">
+<label class="block text-xs font-bold text-primary px-1 tracking-[0.15em] uppercase">Room Code</label>
+<div class="relative w-full">
+<input class="w-full bg-surface-container-low border-none rounded-full px-8 py-5 text-center text-2xl font-headline font-bold tracking-[0.5em] text-primary placeholder:text-outline/40 focus:ring-2 focus:ring-primary-container transition-all duration-300 outline-none uppercase shadow-inner" maxlength="6" placeholder="X7R2KL" type="text"/>
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-full text-center">
+<span class="text-[10px] font-bold text-secondary tracking-[0.2em] flex items-center justify-center gap-2 uppercase">
+<span class="material-symbols-outlined text-[14px]">verified_user</span> 
+                            Encrypted Portal
+                        </span>
+</div>
+</div>
+</div>
+<!-- Primary CTA -->
+<div class="pt-6">
+<button class="w-full py-5 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold text-lg shadow-[0_0_30px_rgba(88,231,251,0.25)] hover:shadow-[0_0_45px_rgba(88,231,251,0.4)] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-3">
+                    Join Room
+                    <span class="material-symbols-outlined">rocket_launch</span>
+</button>
+</div>
+</div>
+<!-- Secondary Footer Options -->
+</div>
+</main>
+<!-- Secondary Feedback Overlay (Invisible by default) -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 glass-panel rounded-full border border-error/20 flex items-center gap-3 text-error text-sm font-medium opacity-0 pointer-events-none transition-opacity duration-500 z-50">
+<span class="material-symbols-outlined text-lg">warning</span>
+        The portal code you entered has expired or does not exist.
+</div>
+</body></html>

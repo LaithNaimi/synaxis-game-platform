@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#f9f9ff",
+                        "surface-dim": "#0b0e14",
+                        "tertiary-dim": "#85e3ef",
+                        "error-container": "#9f0519",
+                        "surface": "#0b0e14",
+                        "on-primary-fixed-variant": "#005b66",
+                        "secondary": "#96a5ff",
+                        "inverse-primary": "#006975",
+                        "on-primary": "#00515b",
+                        "on-tertiary": "#00646d",
+                        "on-error-container": "#ffa8a3",
+                        "primary-container": "#1cc2d6",
+                        "on-secondary-container": "#c7cdff",
+                        "error-dim": "#d7383b",
+                        "on-secondary-fixed": "#1a2b7e",
+                        "on-tertiary-fixed-variant": "#00666f",
+                        "on-primary-container": "#00363d",
+                        "tertiary-container": "#93f1fd",
+                        "surface-container-high": "#1c2028",
+                        "tertiary-fixed-dim": "#85e3ef",
+                        "secondary-fixed-dim": "#b7c0ff",
+                        "surface-tint": "#58e7fb",
+                        "on-background": "#ecedf6",
+                        "primary-fixed": "#58e7fb",
+                        "primary-fixed-dim": "#45d8ed",
+                        "tertiary-fixed": "#93f1fd",
+                        "on-secondary": "#0f2176",
+                        "primary-dim": "#45d8ed",
+                        "on-primary-fixed": "#003c44",
+                        "background": "#0b0e14",
+                        "on-tertiary-fixed": "#00474d",
+                        "tertiary": "#ccf9ff",
+                        "on-tertiary-container": "#005b63",
+                        "on-surface-variant": "#a9abb3",
+                        "inverse-on-surface": "#52555c",
+                        "on-surface": "#ecedf6",
+                        "secondary-container": "#2f3f92",
+                        "surface-container-low": "#10131a",
+                        "surface-variant": "#22262f",
+                        "secondary-fixed": "#c9cfff",
+                        "on-error": "#490006",
+                        "surface-bright": "#282c36",
+                        "error": "#ff716c",
+                        "outline": "#73757d",
+                        "outline-variant": "#45484f",
+                        "secondary-dim": "#8998f0",
+                        "surface-container": "#161a21",
+                        "surface-container-highest": "#22262f",
+                        "on-secondary-fixed-variant": "#3a499c",
+                        "primary": "#58e7fb",
+                        "surface-container-lowest": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-grid-pattern {
+            background-image: radial-gradient(circle, rgba(88, 231, 251, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 min-h-screen flex flex-col items-center">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl z-50 flex items-center justify-between bg-cyan-900/60 backdrop-blur-xl dark:bg-cyan-950/60 rounded-full mt-4 px-6 h-14 shadow-[0_0_20px_rgba(38,198,218,0.15)]">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-cyan-400/10 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-cyan-400 dark:text-cyan-300">arrow_back</span>
+</button>
+<span class="font-['Space_Grotesk'] tracking-wide uppercase text-sm font-bold text-cyan-400 dark:text-cyan-300">Synaxis</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full border border-outline-variant/10">
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(88,231,251,0.5)]"></span>
+<span class="text-[10px] font-bold tracking-tighter uppercase text-primary">Connected</span>
+</div>
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-cyan-400/10 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-cyan-400 dark:text-cyan-300">timer</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="w-full flex-grow pt-28 pb-32 px-6 bg-grid-pattern relative flex flex-col items-center">
+<div class="w-full max-w-xl space-y-10">
+<!-- Room Identity Header (Centered) -->
+<div class="space-y-2 text-center">
+<p class="text-primary font-headline font-bold tracking-widest text-xs uppercase">Deployment Protocol</p>
+<h1 class="text-4xl md:text-5xl font-headline font-bold tracking-tight">The Lobby</h1>
+</div>
+<!-- Top Section: Room Code + Start Game Button (Centered Cluster) -->
+<div class="flex flex-col items-center gap-6">
+<!-- Room Code Pill -->
+<div class="w-full bg-surface-container-high/60 backdrop-blur-md p-3 px-6 rounded-full flex items-center justify-between border border-outline-variant/10 shadow-lg">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">Room Code</span>
+<span class="text-xl font-headline font-bold text-on-surface tracking-tighter">XJ-992-ALPHA</span>
+</div>
+<button class="bg-surface-container-highest hover:bg-surface-bright text-on-surface p-2 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined text-xl">content_copy</span>
+</button>
+</div>
+<!-- Start Game Button -->
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-headline font-extrabold text-sm px-12 py-4 rounded-full shadow-[0_0_30px_rgba(88,231,251,0.2)] hover:shadow-[0_0_40px_rgba(88,231,251,0.3)] transition-all active:scale-[0.98] uppercase tracking-wider">
+                Start Game
+            </button>
+</div>
+<!-- Middle Section: Player List Bento (Centered List) -->
+<div class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="font-headline font-bold text-lg text-on-surface">Synchronized Agents</h3>
+<span class="text-xs font-bold text-primary px-3 py-1 rounded-full bg-primary/10">4 / 8 Joined</span>
+</div>
+<div class="grid grid-cols-1 gap-3">
+<!-- Player Card: Host -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center justify-between border-l-4 border-primary shadow-sm hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Avatar" class="w-12 h-12 rounded-full bg-surface-container-highest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbvYD8Z91qhYLMlSDnqER6k3zg6Vz6toD1C7Edl9523kNtM9K0GLJCYFxtjaqcty4DV3dsy6IFxft_qw0oFy6nsLm6VT7deMFsi0lSKAv_eMDWShjI_E0IeVSjnEeC_TspOnvoQtagi6Hzya-iDo2I0cgF8tUc59j7xWGRLgMyus_4453NuqPHPNX9t5aLAyGz40ZBRwwRPso-WHmOBv5tg292AnQ0KN7_WTC_bVJ9sfxUgYiI1t1uRHzgTFffBzOOrbH6-T1t7pc"/>
+<span class="absolute -top-1 -right-1 material-symbols-outlined text-amber-400 bg-surface rounded-full p-0.5 text-[16px] shadow-sm" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface flex items-center gap-2">
+                                Felix_Nova
+                                <span class="text-[9px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-black tracking-tighter uppercase">Host</span>
+</h4>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] text-on-surface-variant font-semibold">Ready to lead</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">more_vert</span>
+</div>
+<!-- Player Card 2 -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-outline-variant/5 shadow-sm hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Avatar" class="w-12 h-12 rounded-full bg-surface-container-highest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxqREdar-EqZBfktthE2artfcx495JydoTeeynetxK_PwMf1ZrLsvAZcUvEpuZTlkHiDA1QWHNjJoZrBvtC3S15-6n40Epk6_myRI_SacJbLu9C2cP87KHAHJWkU-9rgW4F90BGGd22m3DJbASytVj7dCAJUt-APKbW4_l0Y0DNi0SyQ39JXGZKgVT-OXaHIM1I1taxYP_kwYY_4QX9kqEAXelRXFu5pK_di097PHZYDTtM9StdVTxTMcSzoXX5jKd3_Hub60FUbs"/>
+<div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-surface"></div>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Luna_Void</h4>
+<div class="flex items-center gap-1.5">
+<span class="text-[10px] text-on-surface-variant font-semibold">Synchronizing...</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">more_vert</span>
+</div>
+<!-- Player Card 3 -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-outline-variant/5 shadow-sm hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Avatar" class="w-12 h-12 rounded-full bg-surface-container-highest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq6efO7ggXfhpGXuKDtA31LFdOkq49oQXmTMNFKWOwynthoqSgAHp6MR-TSgkBAfQj3yyoSrabaM_Ak9sU89n1lYbRLm1iuUsCimEBM9mPh-02-5KPlVZabgftRDWPuVJcyM4U_FD1Q6T32iFaNRB-G10d6Yu-4W3TgsjQCPFoh0Jut-cio1RMYftZTsjqmd_PhHbhiOSIjKG8ENVKOGHxjqaf0ItsdYZCsNPs2AKNmyhQFHxF-gClCUXTyn8JUuAdxnj_ZLwtfrM"/>
+<div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-surface"></div>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Kenji_01</h4>
+<div class="flex items-center gap-1.5">
+<span class="text-[10px] text-on-surface-variant font-semibold">Waiting for start</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">more_vert</span>
+</div>
+<!-- Player Card 4 -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-outline-variant/5 shadow-sm hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Avatar" class="w-12 h-12 rounded-full bg-surface-container-highest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1zKLkRTUcDerrKeiFXt-Tnc8R-6zuNk_OKs6i7j67bzFrZvLaSrMZeWVVBVxQNbwFINSEAOMezdBq0q0C9UyNEmDgZSt2Y-ml3BUq8H2GOa6LkFBX3NAwcGwA_ww4c4sPASjv6FI7Sv-lzj9ews3JSm_cMvLui2gN1VjKfq-Iqlvn7BwQU3eJodbhHKvuNWo7Ioe5JauzFDPDp5Q-VV7npXzB34NjLKt0x4_N6itjPqWY34P6mPJRIWq4lyOPhIMYK3Ugloi3x5s"/>
+<div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-surface"></div>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Cyber_Sarah</h4>
+<div class="flex items-center gap-1.5">
+<span class="text-[10px] text-amber-500 font-semibold">Slow Ping (240ms)</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">more_vert</span>
+</div>
+<!-- Empty Slot Placeholder -->
+<div class="bg-surface-container-low/50 border-2 border-dashed border-outline-variant/20 rounded-2xl p-4 flex items-center justify-center gap-3 cursor-pointer hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-outline-variant">person_add</span>
+<span class="text-sm font-bold text-outline-variant tracking-wider uppercase">Invite Friend</span>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Room Settings (Centered Card) -->
+<div class="bg-surface-container rounded-3xl p-8 border border-outline-variant/10 space-y-6 shadow-xl">
+<h3 class="font-headline font-bold text-lg text-primary flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">settings_input_component</span>
+                Room Settings
+            </h3>
+<div class="grid grid-cols-1 gap-3">
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low">
+<span class="text-sm text-on-surface-variant font-medium">Difficulty (CEFR)</span>
+<span class="px-4 py-1 bg-secondary-container text-secondary rounded-full text-xs font-bold">B2 Upper</span>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low">
+<span class="text-sm text-on-surface-variant font-medium">Total Rounds</span>
+<span class="text-sm font-bold text-on-surface">12 Rounds</span>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low">
+<span class="text-sm text-on-surface-variant font-medium">Round Duration</span>
+<span class="text-sm font-bold text-on-surface">45 Seconds</span>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low">
+<span class="text-sm text-on-surface-variant font-medium">Max Players</span>
+<span class="text-sm font-bold text-on-surface">8 Slots</span>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/10 flex justify-center">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-dim text-lg">verified_user</span>
+<p class="text-[11px] leading-relaxed text-center">Only the host can modify these parameters before initialization.</p>
+</div>
+</div>
+</div>
+<!-- Room Chat Preview (Centered) -->
+<div class="bg-surface-container/40 rounded-3xl p-6 border border-outline-variant/10 shadow-lg">
+<div class="flex items-center justify-between mb-4 px-2">
+<span class="text-[10px] uppercase font-black text-on-surface-variant tracking-[0.2em]">Live Feed</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">chat_bubble</span>
+</div>
+<div class="space-y-3">
+<p class="text-[13px]"><span class="font-bold text-secondary">Felix_Nova:</span> Welcome everyone! We start in 2 mins.</p>
+<p class="text-[13px]"><span class="font-bold text-primary">Luna_Void:</span> Ready for some grammar training!</p>
+<p class="text-[12px] text-on-surface-variant italic text-center pt-2">Cyber_Sarah has joined the room.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Centered items) -->
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl z-50 flex justify-around items-center px-6 py-4 bg-slate-900/80 backdrop-blur-2xl dark:bg-slate-950/80 rounded-t-[3rem] shadow-[0_-10px_40px_rgba(38,198,218,0.06)]">
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-cyan-400 to-cyan-600 text-slate-900 rounded-full px-5 py-2 shadow-[0_0_15px_rgba(38,198,218,0.4)] transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1">leaderboard</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold">Ranks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold">System</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1 text-error">logout</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold">Leave</span>
+</a>
+</nav>
+<!-- Corner Ambient Glows -->
+<div class="fixed top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="fixed bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-secondary/10 rounded-full blur-[100px] pointer-events-none"></div>
+</body></html>

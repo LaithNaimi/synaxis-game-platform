@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#f9f9ff",
+                    "surface-dim": "#0b0e14",
+                    "tertiary-dim": "#85e3ef",
+                    "error-container": "#9f0519",
+                    "surface": "#0b0e14",
+                    "on-primary-fixed-variant": "#005b66",
+                    "secondary": "#96a5ff",
+                    "inverse-primary": "#006975",
+                    "on-primary": "#00515b",
+                    "on-tertiary": "#00646d",
+                    "on-error-container": "#ffa8a3",
+                    "primary-container": "#1cc2d6",
+                    "on-secondary-container": "#c7cdff",
+                    "error-dim": "#d7383b",
+                    "on-secondary-fixed": "#1a2b7e",
+                    "on-tertiary-fixed-variant": "#00666f",
+                    "on-primary-container": "#00363d",
+                    "tertiary-container": "#93f1fd",
+                    "surface-container-high": "#1c2028",
+                    "tertiary-fixed-dim": "#85e3ef",
+                    "secondary-fixed-dim": "#b7c0ff",
+                    "surface-tint": "#58e7fb",
+                    "on-background": "#ecedf6",
+                    "primary-fixed": "#58e7fb",
+                    "primary-fixed-dim": "#45d8ed",
+                    "tertiary-fixed": "#93f1fd",
+                    "on-secondary": "#0f2176",
+                    "primary-dim": "#45d8ed",
+                    "on-primary-fixed": "#003c44",
+                    "background": "#0b0e14",
+                    "on-tertiary-fixed": "#00474d",
+                    "tertiary": "#ccf9ff",
+                    "on-tertiary-container": "#005b63",
+                    "on-surface-variant": "#a9abb3",
+                    "inverse-on-surface": "#52555c",
+                    "on-surface": "#ecedf6",
+                    "secondary-container": "#2f3f92",
+                    "surface-container-low": "#10131a",
+                    "surface-variant": "#22262f",
+                    "secondary-fixed": "#c9cfff",
+                    "on-error": "#490006",
+                    "surface-bright": "#282c36",
+                    "error": "#ff716c",
+                    "outline": "#73757d",
+                    "outline-variant": "#45484f",
+                    "secondary-dim": "#8998f0",
+                    "surface-container": "#161a21",
+                    "surface-container-highest": "#22262f",
+                    "on-secondary-fixed-variant": "#3a499c",
+                    "primary": "#58e7fb",
+                    "surface-container-lowest": "#000000"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .bg-nebula {
+            background: radial-gradient(circle at 50% 50%, rgba(88, 231, 251, 0.08) 0%, rgba(11, 14, 20, 1) 70%);
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .arabic-text {
+            direction: rtl;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen flex flex-col overflow-x-hidden">
+<!-- Header Navigation (TopAppBar) -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between bg-cyan-900/60 backdrop-blur-xl dark:bg-cyan-950/60 rounded-full mt-4 mx-4 px-6 h-14 shadow-[0_0_20px_rgba(38,198,218,0.15)] max-w-[calc(100%-2rem)]">
+<div class="flex items-center gap-4">
+<button class="p-2 text-cyan-400 dark:text-cyan-300 hover:bg-cyan-400/10 transition-colors active:scale-95 duration-200 flex items-center justify-center rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<span class="font-['Space_Grotesk'] tracking-wide uppercase text-sm font-bold text-cyan-400 dark:text-cyan-300">Synaxis</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-cyan-400 dark:text-cyan-300 hover:bg-cyan-400/10 transition-colors active:scale-95 duration-200 flex items-center justify-center rounded-full">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-32 bg-nebula relative">
+<!-- Decorative Background Element -->
+<div class="absolute top-1/4 -left-20 w-64 h-64 bg-primary/5 blur-[100px] rounded-full"></div>
+<div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-secondary/5 blur-[120px] rounded-full"></div>
+<!-- Central Focused Glass Panel -->
+<div class="w-full max-w-2xl glass-panel bg-surface-variant/40 rounded-xl p-8 md:p-12 shadow-[0_0_40px_rgba(88,231,251,0.06)] flex flex-col items-center text-center space-y-10 border border-outline-variant/10">
+<!-- Icon/Visual Anchor -->
+<div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-[0_0_30px_rgba(88,231,251,0.3)]">
+<span class="material-symbols-outlined text-on-primary-container text-4xl" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="space-y-2">
+<p class="text-primary text-sm font-bold tracking-widest uppercase font-headline">New Discovery</p>
+<h1 class="text-5xl md:text-7xl font-extrabold font-headline tracking-tight text-on-surface">Synaxis</h1>
+</div>
+<!-- Language Breakdown Section -->
+<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
+<!-- Arabic Meaning -->
+<div class="flex flex-col space-y-4 p-6 rounded-lg bg-surface-container-low/50">
+<span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider text-right">المعنى العربي</span>
+<div class="arabic-text text-4xl font-semibold text-primary-fixed-dim leading-relaxed">
+                        تجمع مقدس أو محفل
+                    </div>
+</div>
+<!-- English Definition -->
+<div class="flex flex-col space-y-4 p-6 rounded-lg bg-surface-container-low/50 text-left">
+<span class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider">English Definition</span>
+<div class="text-lg leading-relaxed text-on-surface/90">
+                        A gathering or congregation, especially for public worship or ritual in the early church.
+                    </div>
+</div>
+</div>
+<!-- Reflective Quote or Context -->
+<div class="max-w-lg">
+<p class="text-on-surface-variant italic font-light text-body">
+                    "Where knowledge meets the stars, every word becomes a bridge to a deeper understanding of our shared cosmos."
+                </p>
+</div>
+<!-- Primary CTA -->
+<div class="pt-6 w-full flex justify-center">
+<button class="px-10 py-4 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-headline font-bold text-lg flex items-center gap-3 shadow-[0_0_20px_rgba(28,194,214,0.4)] hover:shadow-[0_0_30px_rgba(28,194,214,0.6)] transition-all active:scale-95 group">
+                    Go to Leaderboard
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="trending_up">trending_up</span>
+</button>
+</div>
+</div>
+<!-- Feedback Indicator -->
+<div class="mt-8 flex items-center gap-2 text-on-surface-variant bg-surface-container-high/40 px-4 py-2 rounded-full border border-outline-variant/10">
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(88,231,251,0.6)]"></span>
+<span class="text-xs font-medium">+25 Insight Points Earned</span>
+</div>
+</main>
+<!-- Bottom Navigation Shell (BottomNavBar) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 py-4 bg-slate-900/80 backdrop-blur-2xl dark:bg-slate-950/80 rounded-t-[3rem] shadow-[0_-10px_40px_rgba(38,198,218,0.06)]">
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold">Ranks</span>
+</div>
+<!-- System Active State -->
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-cyan-400 to-cyan-600 text-slate-900 rounded-full px-5 py-2 shadow-[0_0_15px_rgba(38,198,218,0.4)] active:scale-90 duration-300">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold">System</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-cyan-200 transition-all active:scale-90 duration-300">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold">Leave</span>
+</div>
+</nav>
+<!-- Decorative Top Glow -->
+<div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-32 bg-primary/10 blur-[80px] pointer-events-none -z-10"></div>
+</body></html>

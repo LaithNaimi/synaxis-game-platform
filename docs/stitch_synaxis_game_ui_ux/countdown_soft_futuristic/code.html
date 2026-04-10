@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Synaxis - Round Countdown</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#f9f9ff",
+                        "surface-dim": "#0b0e14",
+                        "tertiary-dim": "#85e3ef",
+                        "error-container": "#9f0519",
+                        "surface": "#0b0e14",
+                        "on-primary-fixed-variant": "#005b66",
+                        "secondary": "#96a5ff",
+                        "inverse-primary": "#006975",
+                        "on-primary": "#00515b",
+                        "on-tertiary": "#00646d",
+                        "on-error-container": "#ffa8a3",
+                        "primary-container": "#1cc2d6",
+                        "on-secondary-container": "#c7cdff",
+                        "error-dim": "#d7383b",
+                        "on-secondary-fixed": "#1a2b7e",
+                        "on-tertiary-fixed-variant": "#00666f",
+                        "on-primary-container": "#00363d",
+                        "tertiary-container": "#93f1fd",
+                        "surface-container-high": "#1c2028",
+                        "tertiary-fixed-dim": "#85e3ef",
+                        "secondary-fixed-dim": "#b7c0ff",
+                        "surface-tint": "#58e7fb",
+                        "on-background": "#ecedf6",
+                        "primary-fixed": "#58e7fb",
+                        "primary-fixed-dim": "#45d8ed",
+                        "tertiary-fixed": "#93f1fd",
+                        "on-secondary": "#0f2176",
+                        "primary-dim": "#45d8ed",
+                        "on-primary-fixed": "#003c44",
+                        "background": "#0b0e14",
+                        "on-tertiary-fixed": "#00474d",
+                        "tertiary": "#ccf9ff",
+                        "on-tertiary-container": "#005b63",
+                        "on-surface-variant": "#a9abb3",
+                        "inverse-on-surface": "#52555c",
+                        "on-surface": "#ecedf6",
+                        "secondary-container": "#2f3f92",
+                        "surface-container-low": "#10131a",
+                        "surface-variant": "#22262f",
+                        "secondary-fixed": "#c9cfff",
+                        "on-error": "#490006",
+                        "surface-bright": "#282c36",
+                        "error": "#ff716c",
+                        "outline": "#73757d",
+                        "outline-variant": "#45484f",
+                        "secondary-dim": "#8998f0",
+                        "surface-container": "#161a21",
+                        "surface-container-highest": "#22262f",
+                        "on-secondary-fixed-variant": "#3a499c",
+                        "primary": "#58e7fb",
+                        "surface-container-lowest": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0e14;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .countdown-glow {
+            text-shadow: 0 0 40px rgba(88, 231, 251, 0.4);
+        }
+        .radial-pulse {
+            background: radial-gradient(circle, rgba(28, 194, 214, 0.1) 0%, rgba(11, 14, 20, 0) 70%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col overflow-hidden">
+<!-- Top Navigation Bar (Shared Component: TopAppBar) -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between bg-cyan-900/60 backdrop-blur-xl dark:bg-cyan-950/60 rounded-full mt-4 mx-4 px-6 h-14 shadow-[0_0_20px_rgba(38,198,218,0.15)] max-w-[calc(100%-2rem)]">
+<div class="flex items-center gap-4">
+<button class="text-cyan-400 dark:text-cyan-300 hover:bg-cyan-400/10 transition-colors active:scale-95 duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<span class="font-['Space_Grotesk'] tracking-wide uppercase text-sm font-bold text-cyan-400 dark:text-cyan-300">Synaxis</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-cyan-400 dark:text-cyan-300 hover:bg-cyan-400/10 transition-colors active:scale-95 duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+</button>
+</div>
+</header>
+<!-- Main Content: Countdown Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center relative px-6 h-full">
+<!-- Atmospheric Pulse Background -->
+<div class="absolute inset-0 radial-pulse pointer-events-none"></div>
+<!-- Round Indicator -->
+<div class="z-10">
+<div class="bg-surface-container/40 backdrop-blur-md px-6 py-2 rounded-full border border-primary/10 shadow-[0_0_20px_rgba(88,231,251,0.05)]">
+<span class="font-headline font-semibold text-primary uppercase tracking-[0.2em] text-sm">Round 4 of 12</span>
+</div>
+</div>
+<!-- Central HUD Elements (Visual Only) -->
+<div class="relative flex items-center justify-center">
+<!-- Rotating HUD Circles (Implied Motion through Layering) -->
+<div class="absolute w-[450px] h-[450px] border border-primary/5 rounded-full"></div>
+<div class="absolute w-[400px] h-[400px] border-t-2 border-primary/20 rounded-full rotate-45"></div>
+<div class="absolute w-[350px] h-[350px] border-l-2 border-primary/10 rounded-full -rotate-12"></div>
+<!-- Soft Pulsing Ring -->
+<div class="absolute w-80 h-80 rounded-full bg-primary/5 blur-3xl"></div>
+<!-- Countdown Number -->
+<div class="relative z-10 flex flex-col items-center">
+<h1 class="font-headline text-[18rem] font-bold text-primary countdown-glow leading-none select-none">3</h1>
+<p class="font-headline tracking-[0.5em] text-on-surface-variant uppercase text-xs mt-4">Initializing Matrix</p>
+</div>
+</div>
+<!-- Contextual Detail Chips (Asymmetric Layout) -->
+<div class="absolute bottom-32 left-10 md:left-24 max-w-xs space-y-4 hidden md:block">
+<div class="flex items-center gap-4 bg-surface-container/30 p-4 rounded-lg backdrop-blur-sm">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="rocket_launch">rocket_launch</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-medium">Objective</p>
+<p class="text-sm font-semibold text-on-surface">Secure the Node</p>
+</div>
+</div>
+</div>
+<div class="absolute top-1/2 right-10 md:right-24 -translate-y-1/2 space-y-4 hidden md:block">
+<div class="bg-surface-container/30 p-1 rounded-full backdrop-blur-sm flex flex-col items-center gap-4 py-6">
+<span class="w-2 h-2 rounded-full bg-primary/30"></span>
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(88,231,251,0.8)]"></span>
+<span class="w-2 h-2 rounded-full bg-primary/30"></span>
+<span class="w-2 h-2 rounded-full bg-primary/30"></span>
+</div>
+<p class="[writing-mode:vertical-lr] font-headline text-[10px] tracking-[0.3em] uppercase text-on-surface-variant/60">Sequence Active</p>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Suppressed Rule: Suppressed if Task-Focused/Linear Transition) -->
+<!-- Note: Following the 'Destination Rule', this transition screen suppresses the BottomNavBar to prioritize the focused countdown journey. -->
+<!-- Ambient Footer Accent -->
+<footer class="fixed bottom-0 left-0 w-full p-8 flex justify-between items-center z-10">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(88,231,251,0.6)]"></div>
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant">System Ready</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Current Ping</p>
+<p class="text-xs font-bold font-headline text-primary">24ms</p>
+</div>
+<div class="w-[1px] h-8 bg-outline-variant/20"></div>
+<div class="text-right">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Session ID</p>
+<p class="text-xs font-bold font-headline text-on-surface">SYN-8821</p>
+</div>
+</div>
+</footer>
+<!-- Imagery Placeholder (For Background Atmosphere if needed) -->
+<div class="fixed inset-0 -z-10 opacity-20">
+<div class="w-full h-full" data-alt="Dark ethereal cosmic background with subtle deep navy and cyan radial light gradients and soft grain texture" style="background-image: radial-gradient(circle at 50% 50%, #161a21 0%, #0b0e14 100%)"></div>
+</div>
+</body></html>
