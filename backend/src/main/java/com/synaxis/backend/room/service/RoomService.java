@@ -85,6 +85,7 @@ public class RoomService {
                 playerToken,
                 true,
                 room.getStatus(),
+                roomSettings,
                 List.of(
                         new PlayerSummaryResponse(
                                 hostPlayer.getPlayerId(),
@@ -144,6 +145,7 @@ public class RoomService {
                     playerToken,
                     false,
                     room.getStatus(),
+                    room.getSettings(),
                     players
             );
         });

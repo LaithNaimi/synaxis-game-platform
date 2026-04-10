@@ -1,6 +1,7 @@
 
 package com.synaxis.backend.room.dto;
 
+import com.synaxis.backend.room.model.RoomSettings;
 import com.synaxis.backend.room.model.RoomStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,5 +22,6 @@ public class CreateRoomResponse {
     private String playerToken;
     private boolean isHost;
     private RoomStatus roomState;
+    private RoomSettings roomSettings;
     private List<PlayerSummaryResponse> players;
 }
