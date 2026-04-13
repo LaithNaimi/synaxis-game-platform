@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class RoomController {
 
     private final RoomService roomService;
-    @PostMapping
+    @PostMapping("create")
     public ResponseEntity<ApiSuccessResponse<CreateRoomResponse>> createRoom(@Valid @RequestBody CreateRoomRequest request) {
         return ResponseEntity.ok(ApiSuccessResponse.success(roomService.createRoom(request)));
     }

@@ -55,6 +55,17 @@ public class GameEventPublisher {
         publishRoomEvent(roomCode, event);
     }
 
+    public void publishRoomRosterUpdated(String roomCode, String leavingPlayerId, String hostPlayerId){
+        PlayerLeaveEvent event = new PlayerLeaveEvent();
+        event.setType("PLAYER_LEAVE");
+        event.setRoomCode(roomCode);
+        event.setLeavingPlayerId(leavingPlayerId);
+        event.setHostPlayerId(hostPlayerId);
+
+        publishRoomEvent(roomCode, event);
+    }
+
+
 
     public void publishRoundEvent(String roomCode, Object event) {
         messagingTemplate.convertAndSend(

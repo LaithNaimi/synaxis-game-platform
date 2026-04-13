@@ -175,15 +175,11 @@ public class RoomService {
             }
             roomRepository.save(room);
             if (!room.isEmpty()) {
-                List<PlayerSummaryResponse> updatedPlayers = room.getPlayers()
-                        .stream()
-                        .map(p -> new PlayerSummaryResponse(
-                                p.getPlayerId(),
-                                p.getPlayerName(),
-                                p.isHost()
-                        ))
-                        .toList();
-                //gameEventPublisher.publishRoomRosterUpdated(roomCode, updatedPlayers);
+                gameEventPublisher.publishRoomRosterUpdated(
+                        roomCode,
+                        request.getPlayerId(),
+                        room.getHostPlayer().getPlayerId()
+                        );
             }
         });
     }
