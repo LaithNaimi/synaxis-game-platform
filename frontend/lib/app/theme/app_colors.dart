@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Cyanide Pulse design system color tokens.
-///
-/// Derived from the "Deep Space" palette in DESIGN.md and HTML mockup references.
-/// Use via [AppColors.xxx] in theme wiring; never hardcode hex in feature widgets.
 abstract final class AppColors {
   // ── Core Surfaces (Deep Space foundation) ──────────────────────────
   static const Color background = Color(0xFF0B0E14);
@@ -57,12 +53,8 @@ abstract final class AppColors {
   static const Color inversePrimary = Color(0xFF006975);
 
   // ── Glow / effect helpers ──────────────────────────────────────────
-  /// Primary glow for drop shadows and ambient effects.
-  static const Color primaryGlow = Color(0x3358E7FB); // ~20% opacity
-  /// Stronger glow for active/hover states.
-  static const Color primaryGlowStrong = Color(0x6658E7FB); // ~40% opacity
-  /// Subtle cyan for grid overlay lines.
-  static const Color gridLine = Color(0x0858E7FB); // ~3% opacity
-  /// Card/panel border at low opacity.
-  static const Color panelBorder = Color(0x1A58E7FB); // ~10% opacity
+  static const Color primaryGlow = Color(0x3358E7FB);
+  static const Color primaryGlowStrong = Color(0x6658E7FB);
+  static const Color gridLine = Color(0x0858E7FB);
+  static const Color panelBorder = Color(0x1A58E7FB);
 }

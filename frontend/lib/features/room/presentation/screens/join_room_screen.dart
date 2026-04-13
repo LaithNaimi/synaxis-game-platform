@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/route_names.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
+import '../../../../core/errors/app_exception.dart';
 import '../../../../shared/widgets/glassmorphic_panel.dart';
 import '../../../../shared/widgets/glow_button.dart';
-import '../../../../shared/widgets/nebula_background.dart';
-import '../../../../shared/widgets/synaxis_app_bar.dart';
 import '../../../../shared/widgets/synaxis_text_field.dart';
+import '../../application/providers/lobby_provider.dart';
+import '../../application/providers/room_session_provider.dart';
+import '../../data/models/join_room_request.dart';
+import '../../../../shared/widgets/footer.dart';
 
-/// Join room form — player name + room code (DDS §27.2).
-class JoinRoomScreen extends StatefulWidget {
+class JoinRoomScreen extends ConsumerStatefulWidget {
   const JoinRoomScreen({super.key});
 
   @override
-  State<JoinRoomScreen> createState() => _JoinRoomScreenState();
+  ConsumerState<JoinRoomScreen> createState() => _JoinRoomScreenState();
 }
 
-class _JoinRoomScreenState extends State<JoinRoomScreen> {
+class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
   final _nameController = TextEditingController();
   final _codeController = TextEditingController();
 
@@ -35,34 +38,21 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: SynaxisAppBar(onBack: () => context.go(RouteNames.home)),
-      body: NebulaBackground(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: AppSpacing.maxContentWidth,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: AppSpacing.lg),
-                        _buildHeader(),
-                        const SizedBox(height: AppSpacing.lg),
-                        _buildForm(),
-                        const SizedBox(height: AppSpacing.xxl),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+      body: Expanded(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: AppSpacing.lg),
+              _buildHeader(),
+              const SizedBox(height: AppSpacing.lg),
+              _buildForm(),
+              const SizedBox(height: AppSpacing.lg),
+              const Footer(),
+              const SizedBox(height: AppSpacing.xxl),
+            ],
+          ),
         ),
       ),
     );
@@ -78,8 +68,8 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          'Enter your credentials to enter the cosmic session.',
-          style: AppTextStyles.body.copyWith(color: AppColors.onSurfaceVariant),
+          'Enter your credentials to enter the cosmic game.',
+          style: AppTextStyles.body,
         ),
       ],
     );
@@ -89,40 +79,32 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
     return GlassmorphicPanel(
       child: Column(
         children: [
-          // Player Name
           SynaxisTextField(
             label: 'Player Name',
-            hint: 'e.g. Starchild_01',
+            hint: 'LAITH  3MK',
             controller: _nameController,
-            suffixIcon: Icons.person,
-            textCapitalization: TextCapitalization.words,
+            icon: Icons.person,
           ),
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.info_outline,
                 size: 14,
-                color: AppColors.secondary.withValues(alpha: 0.7),
+                color: AppColors.secondary,
               ),
               const SizedBox(width: AppSpacing.xs),
               Text(
                 'Visible to other travelers in the room.',
                 style: AppTextStyles.caption.copyWith(
-                  color: AppColors.secondary.withValues(alpha: 0.7),
+                  color: AppColors.secondary,
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: AppSpacing.lg),
-
-          // Room Code
           _buildRoomCodeField(),
-
           const SizedBox(height: AppSpacing.xl),
-
-          // Submit
           GlowButton(
             label: 'Join Room',
             icon: Icons.rocket_launch,
@@ -149,7 +131,6 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
           controller: _codeController,
           maxLength: 6,
           textAlign: TextAlign.center,
-          textCapitalization: TextCapitalization.characters,
           style: AppTextStyles.display.copyWith(
             color: AppColors.primary,
             letterSpacing: 12,
@@ -165,36 +146,32 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
-        Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.verified_user,
-                size: 14,
-                color: AppColors.secondary,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                'ENCRYPTED PORTAL',
-                style: AppTextStyles.micro.copyWith(
-                  color: AppColors.secondary,
-                  letterSpacing: 2,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
 
   Future<void> _onJoinRoom() async {
+    final name = _nameController.text.trim();
+    final code = _codeController.text.trim().toUpperCase();
+    if (name.isEmpty || code.length != 6) return;
+
     setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
+    try {
+      final request = JoinRoomRequest(playerName: name);
+      final session = await ref
+          .read(roomSessionControllerProvider.notifier)
+          .joinRoom(code, request);
+
+      if (!mounted) return;
+      ref.read(lobbyControllerProvider.notifier).init(session);
+      context.go(RouteNames.lobby);
+    } on AppException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 }

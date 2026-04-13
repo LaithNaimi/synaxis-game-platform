@@ -5,11 +5,11 @@ import 'app/router/app_router.dart';
 import 'app/theme/app_theme.dart';
 
 void main() {
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: SynaxisApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SynaxisApp extends StatelessWidget {
+  const SynaxisApp({super.key});
 
   @override
   Widget build(BuildContext context) {

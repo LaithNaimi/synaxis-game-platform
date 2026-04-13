@@ -4,7 +4,7 @@ import 'package:synaxis/main.dart';
 
 void main() {
   testWidgets('App loads home screen', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const SynaxisApp());
 
     expect(find.text('Synaxis'), findsOneWidget);
   });

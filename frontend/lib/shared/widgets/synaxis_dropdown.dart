@@ -14,23 +14,20 @@ class SynaxisDropdown<T> extends StatelessWidget {
     required this.items,
     this.value,
     this.onChanged,
-    this.hint,
-    this.suffixIcon,
+    this.icon,
   });
 
   final String label;
   final List<DropdownMenuItem<T>> items;
   final T? value;
   final ValueChanged<T?>? onChanged;
-  final String? hint;
-  final IconData? suffixIcon;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Uppercase tactical label
         Text(
           label.toUpperCase(),
           style: AppTextStyles.labelUppercase.copyWith(
@@ -54,20 +51,10 @@ class SynaxisDropdown<T> extends StatelessWidget {
               isExpanded: true,
               dropdownColor: AppColors.surfaceContainerHigh,
               icon: Icon(
-                suffixIcon ?? Icons.keyboard_arrow_down,
+                icon ?? Icons.keyboard_arrow_down,
                 color: AppColors.onSurfaceVariant,
               ),
-              hint: hint != null
-                  ? Text(
-                      hint!,
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
-                      ),
-                    )
-                  : null,
-              style: AppTextStyles.body.copyWith(
-                color: AppColors.onSurface,
-              ),
+              style: AppTextStyles.body.copyWith(color: AppColors.onSurface),
             ),
           ),
         ),

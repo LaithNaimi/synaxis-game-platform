@@ -8,9 +8,6 @@ import 'package:stomp_dart_client/stomp_handler.dart' show StompUnsubscribe;
 import '../config/app_config.dart';
 import '../utils/logger.dart';
 
-/// Facade over [StompClient] (DDS §9.3): connect, subscribe, send JSON, disconnect.
-///
-/// Instantiate per room session; [RoomSessionController] owns lifecycle (DDS §14).
 class WebSocketClient {
   WebSocketClient({String? wsUrl}) : _url = wsUrl ?? AppConfig.wsUrl;
 
@@ -19,8 +16,6 @@ class WebSocketClient {
 
   bool get connected => _stomp?.connected ?? false;
 
-  /// Opens the WebSocket and STOMP session. Subscribe inside [onConnected]
-  /// (after broker `CONNECTED` frame).
   void connect({
     required void Function() onConnected,
     void Function(dynamic error)? onWebSocketError,
@@ -39,7 +34,6 @@ class WebSocketClient {
     _stomp!.activate();
   }
 
-  /// Subscribe to a STOMP destination (topic or queue).
   StompUnsubscribe subscribe({
     required String destination,
     required StompFrameCallback callback,
@@ -56,7 +50,6 @@ class WebSocketClient {
     );
   }
 
-  /// SEND frame with JSON body and `content-type: application/json`.
   void sendJson({
     required String destination,
     required Map<String, dynamic> body,

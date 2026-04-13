@@ -55,16 +55,16 @@ class AppTheme {
       fontFamily: AppTextStyles.fontBody,
 
       // ── App bar (transparent; we use custom SynaxisAppBar) ───────
-      appBarTheme: AppBarTheme(
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        foregroundColor: AppColors.onSurface,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        titleTextStyle: AppTextStyles.appBarTitle.copyWith(
-          color: AppColors.primary,
-        ),
-      ),
+      // appBarTheme: AppBarTheme(
+      //   centerTitle: true,
+      //   backgroundColor: Colors.transparent,
+      //   foregroundColor: AppColors.onSurface,
+      //   elevation: 0,
+      //   scrolledUnderElevation: 0,
+      //   titleTextStyle: AppTextStyles.appBarTitle.copyWith(
+      //     color: AppColors.primary,
+      //   ),
+      // ),
 
       // ── Dividers ────────────────────────────────────────────────
       dividerTheme: const DividerThemeData(
@@ -178,7 +178,9 @@ class AppTheme {
           ),
         ),
         menuStyle: MenuStyle(
-          backgroundColor: const WidgetStatePropertyAll(AppColors.surfaceContainerHigh),
+          backgroundColor: const WidgetStatePropertyAll(
+            AppColors.surfaceContainerHigh,
+          ),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),
@@ -188,10 +190,7 @@ class AppTheme {
       ),
 
       // ── Icon theme ─────────────────────────────────────────────
-      iconTheme: const IconThemeData(
-        color: AppColors.primary,
-        size: 24,
-      ),
+      iconTheme: const IconThemeData(color: AppColors.primary, size: 24),
 
       // ── Bottom sheet (if needed) ───────────────────────────────
       bottomSheetTheme: const BottomSheetThemeData(

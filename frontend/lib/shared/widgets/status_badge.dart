@@ -4,7 +4,6 @@ import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../app/theme/app_text_styles.dart';
 
-/// Status style variants for [StatusBadge].
 enum StatusBadgeVariant {
   /// Cyan primary (e.g. HOST, CONNECTED, MATCH MVP).
   primary,
@@ -22,7 +21,6 @@ enum StatusBadgeVariant {
   neutral,
 }
 
-/// Small chip/badge for status labels like HOST, CONNECTED, SOLVED, etc.
 class StatusBadge extends StatelessWidget {
   const StatusBadge({
     super.key,
@@ -35,7 +33,6 @@ class StatusBadge extends StatelessWidget {
   final String label;
   final StatusBadgeVariant variant;
 
-  /// If true, shows a small filled dot before the label (e.g. online indicator).
   final bool showDot;
   final IconData? icon;
 
@@ -64,9 +61,7 @@ class StatusBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: _color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(AppRadius.sm),
-        border: Border.all(
-          color: _color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: _color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -75,10 +70,7 @@ class StatusBadge extends StatelessWidget {
             Container(
               width: 6,
               height: 6,
-              decoration: BoxDecoration(
-                color: _color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: _color, shape: BoxShape.circle),
             ),
             const SizedBox(width: AppSpacing.xs),
           ],

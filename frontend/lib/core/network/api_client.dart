@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import '../config/app_config.dart';
 import '../utils/logger.dart';
 
-/// GET/HEAD only — up to 2 retries with 300ms then 800ms backoff (DDS §9.2).
-/// POST/PUT/PATCH/DELETE are never auto-retried.
 class _TransientRetryInterceptor extends Interceptor {
   _TransientRetryInterceptor(this._dio);
 
@@ -20,19 +18,14 @@ class _TransientRetryInterceptor extends Interceptor {
   ) async {
     final req = err.requestOptions;
     final method = req.method.toUpperCase();
-    if (method != 'GET' && method != 'HEAD') {
-      handler.next(err);
-      return;
-    }
-    if (!_isTransient(err)) {
-      handler.next(err);
-      return;
-    }
+
+    if (method != 'GET') return handler.next(err);
+
+    if (!_isTransient(err)) return handler.next(err);
+
     final count = (req.extra[_retryCountKey] as int?) ?? 0;
-    if (count >= 2) {
-      handler.next(err);
-      return;
-    }
+    if (count >= 2) return handler.next(err);
+
     req.extra[_retryCountKey] = count + 1;
     await Future<void>.delayed(Duration(milliseconds: count == 0 ? 300 : 800));
     try {
@@ -59,10 +52,6 @@ class _TransientRetryInterceptor extends Interceptor {
   }
 }
 
-/// Wraps a single [Dio] instance (DDS §9.2): 10s connect + send + receive timeouts.
-///
-/// Transient failures on **GET** and **HEAD** only are retried at most twice (300ms, then 800ms).
-/// Mutating requests are never auto-retried — user must retry explicitly.
 class ApiClient {
   ApiClient._()
     : dio = Dio(
@@ -86,7 +75,6 @@ class ApiClient {
     }
   }
 
-  /// Shared instance for the app (one [Dio] as per DDS).
   static final ApiClient instance = ApiClient._();
 
   final Dio dio;

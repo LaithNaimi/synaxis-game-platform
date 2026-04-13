@@ -13,27 +13,31 @@ import '../../features/learning/presentation/screens/learning_reveal_screen.dart
 import '../../features/room/presentation/screens/lobby_screen.dart';
 import 'route_names.dart';
 
-/// Builds the MVP [GoRouter] (DDS §7.1). Use a fresh instance in tests via this factory.
 GoRouter createAppRouter() {
   return GoRouter(
     initialLocation: RouteNames.home,
     routes: [
       GoRoute(
         path: RouteNames.home,
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const AppPageShell(
+          title: 'synaxis',
+          showBackButton: false,
+          child: HomeScreen(),
+        ),
       ),
       GoRoute(
         path: RouteNames.createRoom,
-        builder: (context, _) => const CreateRoomScreen(),
+        builder: (context, _) =>
+            const AppPageShell(title: 'Create Room', child: CreateRoomScreen()),
       ),
       GoRoute(
         path: RouteNames.joinRoom,
-        builder: (context, _) => const JoinRoomScreen(),
+        builder: (context, _) =>
+            const AppPageShell(title: 'Join Room', child: JoinRoomScreen()),
       ),
       GoRoute(
         path: RouteNames.lobby,
-        builder: (context, _) =>
-            const AppPageShell(title: 'Lobby', child: LobbyScreen()),
+        builder: (context, _) => const LobbyScreen(),
       ),
       GoRoute(
         path: RouteNames.countdown,
@@ -77,5 +81,4 @@ GoRouter createAppRouter() {
   );
 }
 
-/// Root router for the running app (`MaterialApp.router`).
 final GoRouter appRouter = createAppRouter();
