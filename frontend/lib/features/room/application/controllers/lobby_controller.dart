@@ -8,6 +8,7 @@ import '../../../../core/network/ws_destinations.dart';
 import '../../data/models/player_model.dart';
 import '../../data/models/room_event.dart';
 import '../../data/models/room_session_model.dart';
+import '../../presentation/widgets/live_feed_card.dart';
 import '../state/lobby_state.dart';
 
 class LobbyController extends Notifier<LobbyState> {
@@ -20,7 +21,16 @@ class LobbyController extends Notifier<LobbyState> {
 
   void init(RoomSessionModel session) {
     _session = session;
-    state = LobbyState(players: List.of(session.players));
+    final seedFeed = session.players
+        .map((p) => LiveFeedEntry(
+              text: '${p.playerName} is in the room.',
+              isSystem: true,
+            ))
+        .toList();
+    state = LobbyState(
+      players: List.of(session.players),
+      feedMessages: seedFeed,
+    );
     _connectWebSocket();
   }
 
@@ -59,6 +69,12 @@ class LobbyController extends Notifier<LobbyState> {
         _handlePlayerJoined(player);
       case PlayerLeaveEvent(:final leavingPlayerId, :final hostPlayerId):
         _handlePlayerLeave(leavingPlayerId, hostPlayerId);
+      case GameStartedEvent():
+        state = state.copyWith(gameStarted: true, isStarting: false);
+      case RoundCountdownStartedEvent(:final roundNumber):
+        state = state.copyWith(roundNumber: roundNumber, roundStarted: false);
+      case RoundStartedEvent():
+        state = state.copyWith(roundStarted: true);
       case UnknownRoomEvent():
         break;
     }
@@ -67,10 +83,20 @@ class LobbyController extends Notifier<LobbyState> {
   void _handlePlayerJoined(PlayerModel player) {
     final exists = state.players.any((p) => p.playerId == player.playerId);
     if (exists) return;
-    state = state.copyWith(players: [...state.players, player]);
+    state = state.copyWith(
+      players: [...state.players, player],
+      feedMessages: [
+        ...state.feedMessages,
+        LiveFeedEntry(
+          text: '${player.playerName} has joined the room.',
+          isSystem: true,
+        ),
+      ],
+    );
   }
 
   void _handlePlayerLeave(String leavingPlayerId, String hostPlayerId) {
+    final leaver = state.players.where((p) => p.playerId == leavingPlayerId).firstOrNull;
     final updated = state.players
         .where((p) => p.playerId != leavingPlayerId)
         .map(
@@ -81,7 +107,33 @@ class LobbyController extends Notifier<LobbyState> {
           ),
         )
         .toList();
-    state = state.copyWith(players: updated);
+    state = state.copyWith(
+      players: updated,
+      feedMessages: [
+        ...state.feedMessages,
+        LiveFeedEntry(
+          text: '${leaver?.playerName ?? 'A player'} has left the room.',
+          isSystem: true,
+        ),
+      ],
+    );
+  }
+
+  /// Host sends the start-game command via STOMP.
+  /// Sets `isStarting` while waiting; `GAME_STARTED` event sets `gameStarted`.
+  void startGame() {
+    final session = _session;
+    if (session == null || _ws == null || !_ws!.connected) return;
+
+    state = state.copyWith(isStarting: true, error: () => null);
+    _ws!.sendJson(
+      destination: WsDestinations.startGameCommand(),
+      body: {
+        'roomCode': session.roomCode,
+        'playerId': session.playerId,
+        'playerToken': session.playerToken,
+      },
+    );
   }
 
   /// Tear down WS — call before navigating away from the lobby.

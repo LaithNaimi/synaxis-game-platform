@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/create_room_request.dart';
 import '../../data/models/join_room_request.dart';
+import '../../data/models/leave_room_request.dart';
 import '../../data/models/room_session_model.dart';
 import '../../data/repositories/room_repository.dart';
 
@@ -29,6 +30,20 @@ class RoomSessionController extends Notifier<RoomSessionModel?> {
     return session;
   }
 
-  /// Clears the session (player left or room closed).
-  void clear() => state = null;
+  Future<void> leaveRoom() async {
+    final session = state;
+    if (session == null) return;
+    state = null;
+    try {
+      await _repo.leaveRoom(
+        session.roomCode,
+        LeaveRoomRequest(
+          playerId: session.playerId,
+          playerToken: session.playerToken,
+        ),
+      );
+    } catch (_) {
+      // Best-effort — server will clean up via timeout if this fails.
+    }
+  }
 }

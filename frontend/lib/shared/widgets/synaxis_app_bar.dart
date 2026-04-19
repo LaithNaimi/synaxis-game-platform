@@ -11,15 +11,17 @@ class SynaxisAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.title = 'SYNAXIS',
     this.showBackButton = true,
+    this.onBack,
     this.trailing,
   });
 
   final String title;
   final bool showBackButton;
+  final VoidCallback? onBack;
   final Widget? trailing;
 
   @override
-  Size get preferredSize => const Size.fromHeight(50);
+  Size get preferredSize => const Size.fromHeight(72);
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -72,7 +74,7 @@ class SynaxisAppBar extends StatelessWidget implements PreferredSizeWidget {
       color: AppColors.primary,
       size: AppSpacing.lg,
     ),
-    onPressed: () => context.go(RouteNames.home),
+    onPressed: onBack ?? () => context.go(RouteNames.home),
   );
 
   Widget _buildDefaultTrailing() => IconButton(

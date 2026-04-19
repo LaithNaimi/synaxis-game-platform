@@ -5,6 +5,7 @@ import '../../../../core/errors/error_mapper.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/create_room_request.dart';
 import '../models/join_room_request.dart';
+import '../models/leave_room_request.dart';
 import '../models/room_session_model.dart';
 
 class RoomApi {
@@ -35,6 +36,17 @@ class RoomApi {
         data: request.toJson(),
       );
       return _unwrap(response.data!);
+    } on DioException catch (e) {
+      throw ErrorMapper.fromDioException(e);
+    }
+  }
+
+  Future<void> leaveRoom(String roomCode, LeaveRoomRequest request) async {
+    try {
+      await _dio.post<void>(
+        '/api/room/$roomCode/leave',
+        data: request.toJson(),
+      );
     } on DioException catch (e) {
       throw ErrorMapper.fromDioException(e);
     }

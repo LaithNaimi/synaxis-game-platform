@@ -35,13 +35,21 @@ class LobbyScreen extends ConsumerWidget {
 
     final settings = session.roomSettings;
     final players = lobbyState.players;
-    final isHost = session.host;
+    final isHost = players.any((p) => p.playerId == session.playerId && p.host);
     final isConnected = lobbyState.isConnected;
+
+    // All players navigate when the server confirms game start.
+    if (lobbyState.gameStarted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) context.go(RouteNames.countdown);
+      });
+    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: SynaxisAppBar(
         title: 'Lobby',
+        onBack: () => _onLeave(context, ref),
         trailing: StatusBadge(
           label: isConnected ? 'Connected' : 'Disconnected',
           showDot: true,
@@ -64,7 +72,7 @@ class LobbyScreen extends ConsumerWidget {
                     const SizedBox(height: AppSpacing.lg),
                     RoomCodeCard(roomCode: session.roomCode),
                     const SizedBox(height: AppSpacing.md),
-                    _buildStartButton(context, isHost),
+                    _buildStartButton(context, ref, isHost),
                     const SizedBox(height: AppSpacing.lg),
                     _buildPlayerSection(
                       players,
@@ -79,7 +87,7 @@ class LobbyScreen extends ConsumerWidget {
                       maxPlayers: settings.maxPlayers,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    _buildLiveFeed(players),
+                    LiveFeedCard(messages: lobbyState.feedMessages),
                     const SizedBox(height: AppSpacing.xxl),
                   ],
                 ),
@@ -110,12 +118,17 @@ class LobbyScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStartButton(BuildContext context, bool isHost) {
+  Widget _buildStartButton(BuildContext context, WidgetRef ref, bool isHost) {
+    final lobbyState = ref.watch(lobbyControllerProvider);
+
     if (isHost) {
       return GlowButton(
         label: 'Start Game',
         icon: Icons.play_arrow,
-        onPressed: () => context.go(RouteNames.countdown),
+        isLoading: lobbyState.isStarting,
+        onPressed: lobbyState.isStarting
+            ? null
+            : () => ref.read(lobbyControllerProvider.notifier).startGame(),
       );
     }
 
@@ -177,20 +190,9 @@ class LobbyScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLiveFeed(List players) {
-    final messages = players.map((p) {
-      return LiveFeedEntry(
-        text: '${p.playerName} has joined the room.',
-        isSystem: true,
-      );
-    }).toList();
-
-    return LiveFeedCard(messages: messages);
-  }
-
   void _onLeave(BuildContext context, WidgetRef ref) {
     ref.read(lobbyControllerProvider.notifier).disconnect();
-    ref.read(roomSessionControllerProvider.notifier).clear();
+    ref.read(roomSessionControllerProvider.notifier).leaveRoom();
     context.go(RouteNames.home);
   }
 }

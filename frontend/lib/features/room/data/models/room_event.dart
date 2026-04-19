@@ -1,18 +1,19 @@
 import 'player_model.dart';
 
-/// Base for all room-scoped STOMP events on `/topic/room/{code}`.
 sealed class RoomEvent {
-  const RoomEvent({required this.type, required this.roomCode});
+  const RoomEvent({required this.type, this.roomCode = ''});
 
   final String type;
   final String roomCode;
 
-  /// Dispatches to the correct subclass based on the `type` field.
   factory RoomEvent.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String;
     return switch (type) {
       'PLAYER_JOINED' => PlayerJoinedEvent.fromJson(json),
       'PLAYER_LEAVE' => PlayerLeaveEvent.fromJson(json),
+      'GAME_STARTED' => GameStartedEvent.fromJson(json),
+      'ROUND_COUNTDOWN_STARTED' => RoundCountdownStartedEvent.fromJson(json),
+      'ROUND_STARTED' => RoundStartedEvent.fromJson(json),
       _ => UnknownRoomEvent.fromJson(json),
     };
   }
@@ -49,8 +50,6 @@ class PlayerLeaveEvent extends RoomEvent {
   });
 
   final String leavingPlayerId;
-
-  /// The current host after the leave — may differ from before if the leaver was host.
   final String hostPlayerId;
 
   factory PlayerLeaveEvent.fromJson(Map<String, dynamic> json) {
@@ -63,13 +62,60 @@ class PlayerLeaveEvent extends RoomEvent {
   }
 }
 
+class GameStartedEvent extends RoomEvent {
+  const GameStartedEvent({required super.type, required super.roomCode});
+
+  factory GameStartedEvent.fromJson(Map<String, dynamic> json) {
+    return GameStartedEvent(
+      type: json['type'] as String,
+      roomCode: json['roomCode'] as String,
+    );
+  }
+}
+
+class RoundCountdownStartedEvent extends RoomEvent {
+  const RoundCountdownStartedEvent({
+    required super.type,
+    required super.roomCode,
+    required this.roundNumber,
+  });
+
+  final int roundNumber;
+
+  factory RoundCountdownStartedEvent.fromJson(Map<String, dynamic> json) {
+    return RoundCountdownStartedEvent(
+      type: json['type'] as String,
+      roomCode: json['roomCode'] as String? ?? '',
+      roundNumber: json['roundNumber'] as int,
+    );
+  }
+}
+
+class RoundStartedEvent extends RoomEvent {
+  const RoundStartedEvent({
+    required super.type,
+    super.roomCode,
+    required this.roundNumber,
+  });
+
+  final int roundNumber;
+
+  factory RoundStartedEvent.fromJson(Map<String, dynamic> json) {
+    return RoundStartedEvent(
+      type: json['type'] as String,
+      roomCode: json['roomCode'] as String? ?? '',
+      roundNumber: json['roundNumber'] as int,
+    );
+  }
+}
+
 class UnknownRoomEvent extends RoomEvent {
-  const UnknownRoomEvent({required super.type, required super.roomCode});
+  const UnknownRoomEvent({required super.type, super.roomCode});
 
   factory UnknownRoomEvent.fromJson(Map<String, dynamic> json) {
     return UnknownRoomEvent(
       type: json['type'] as String,
-      roomCode: json['roomCode'] as String,
+      roomCode: json['roomCode'] as String? ?? '',
     );
   }
 }
