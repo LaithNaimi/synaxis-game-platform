@@ -5,6 +5,7 @@ import 'package:stomp_dart_client/stomp_handler.dart' show StompUnsubscribe;
 
 import '../../../../core/network/websocket_client.dart';
 import '../../../../core/network/ws_destinations.dart';
+import '../../../game/application/providers/game_provider.dart';
 import '../../data/models/player_model.dart';
 import '../../data/models/room_event.dart';
 import '../../data/models/room_session_model.dart';
@@ -13,7 +14,9 @@ import '../state/lobby_state.dart';
 
 class LobbyController extends Notifier<LobbyState> {
   WebSocketClient? _ws;
-  StompUnsubscribe? _unsubscribe;
+  StompUnsubscribe? _unsubscribeRoom;
+  StompUnsubscribe? _unsubscribeRound;
+  StompUnsubscribe? _unsubscribePrivate;
   RoomSessionModel? _session;
 
   @override
@@ -40,10 +43,19 @@ class LobbyController extends Notifier<LobbyState> {
 
     _ws = WebSocketClient();
     _ws!.connect(
+      connectHeaders: {'playerId': session.playerId},
       onConnected: () {
         state = state.copyWith(isConnected: true, error: () => null);
-        _unsubscribe = _ws!.subscribe(
+        _unsubscribeRoom = _ws!.subscribe(
           destination: WsDestinations.roomTopic(session.roomCode),
+          callback: _onFrame,
+        );
+        _unsubscribeRound = _ws!.subscribe(
+          destination: WsDestinations.roomRoundTopic(session.roomCode),
+          callback: _onFrame,
+        );
+        _unsubscribePrivate = _ws!.subscribe(
+          destination: WsDestinations.privateGameQueue(),
           callback: _onFrame,
         );
       },
@@ -72,11 +84,44 @@ class LobbyController extends Notifier<LobbyState> {
       case GameStartedEvent():
         state = state.copyWith(gameStarted: true, isStarting: false);
       case RoundCountdownStartedEvent(:final roundNumber):
-        state = state.copyWith(roundNumber: roundNumber, roundStarted: false);
-      case RoundStartedEvent():
-        state = state.copyWith(roundStarted: true);
+        state = state.copyWith(roundNumber: roundNumber, roundStarted: false, maskedWord: '');
+        ref.read(gameControllerProvider.notifier).resetForNextRound();
+      case RoundStartedEvent(:final maskedWord):
+        state = state.copyWith(roundStarted: true, maskedWord: maskedWord);
+      case GameEvent(:final type, :final raw):
+        _forwardToGameController(type, raw);
       case UnknownRoomEvent():
         break;
+    }
+  }
+
+  void _forwardToGameController(String type, Map<String, dynamic> raw) {
+    final gc = ref.read(gameControllerProvider.notifier);
+    switch (type) {
+      case 'PLAYER_ROUND_STATE':
+        gc.onPlayerRoundState(raw);
+      case 'LETTER_GUESS_RESULT':
+        gc.onLetterGuessResult(raw);
+      case 'PLAYER_STUNNED':
+        gc.onPlayerStunned(raw);
+      case 'PLAYER_RECOVERED':
+        gc.onPlayerRecovered(raw);
+      case 'PLAYER_SOLVED_WORD':
+        gc.onPlayerSolvedWord();
+      case 'SUDDEN_DEATH_STARTED':
+        gc.onSuddenDeathStarted(raw);
+      case 'SUDDEN_DEATH_ENDED':
+        gc.onSuddenDeathEnded();
+      case 'ROUND_TIMEOUT':
+        gc.onRoundTimeout();
+      case 'LEARNING_REVEAL':
+        gc.onLearningReveal(raw);
+      case 'ROUND_LEADERBOARD':
+        gc.onRoundLeaderboard(raw);
+      case 'MATCH_FINISHED':
+        gc.onMatchFinished();
+      case 'FINAL_LEADERBOARD':
+        gc.onFinalLeaderboard(raw);
     }
   }
 
@@ -119,6 +164,12 @@ class LobbyController extends Notifier<LobbyState> {
     );
   }
 
+  /// Expose the active WebSocket so GameController can send commands.
+  WebSocketClient? get ws => _ws;
+
+  /// Expose the session so GameController can read room/player info.
+  RoomSessionModel? get session => _session;
+
   /// Host sends the start-game command via STOMP.
   /// Sets `isStarting` while waiting; `GAME_STARTED` event sets `gameStarted`.
   void startGame() {
@@ -138,8 +189,12 @@ class LobbyController extends Notifier<LobbyState> {
 
   /// Tear down WS — call before navigating away from the lobby.
   void disconnect() {
-    _unsubscribe?.call(unsubscribeHeaders: {});
-    _unsubscribe = null;
+    _unsubscribeRoom?.call(unsubscribeHeaders: {});
+    _unsubscribeRoom = null;
+    _unsubscribeRound?.call(unsubscribeHeaders: {});
+    _unsubscribeRound = null;
+    _unsubscribePrivate?.call(unsubscribeHeaders: {});
+    _unsubscribePrivate = null;
     _ws?.disconnect();
     _ws = null;
     state = const LobbyState();

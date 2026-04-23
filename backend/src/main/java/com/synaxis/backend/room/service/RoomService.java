@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @Service
@@ -44,7 +47,7 @@ public class RoomService {
     private final LeaderboardService leaderboardService;
     private final DisconnectManager disconnectManager;
     private final ReconnectSnapshotBuilder reconnectSnapshotBuilder;
-
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
     public List<Room> getRooms() {
         return roomRepository.findAll();
     }
@@ -243,6 +246,46 @@ public class RoomService {
 
             matchService.startRoundCountdown(matchState);
             gameEventPublisher.publishRoundCountdownStarted(room.getRoomCode(), matchState.getCurrentRoundNumber());
+            scheduler.schedule(() -> startRound(roomCode),4, TimeUnit.SECONDS);
+        });
+    }
+
+    private void proceedAfterRound(String roomCode) {
+        roomLockManager.executeWithRoomLock(roomCode, () -> {
+            Room room = roomRepository.findByCode(roomCode)
+                    .orElseThrow(RoomNotFoundException::new);
+
+            MatchState matchState = room.getMatchState();
+            RoundState currentRound = matchState.getCurrentRound();
+
+            if (currentRound.getStatus() != RoundStatus.COMPLETED) {
+                return;
+            }
+
+            if (matchState.hasNextRound()) {
+                matchService.advanceToNextRound(matchState, room.getPlayers());
+
+                matchService.startRoundCountdown(matchState);
+
+                roomRepository.save(room);
+
+                gameEventPublisher.publishRoundCountdownStarted(
+                        roomCode,
+                        matchState.getCurrentRoundNumber()
+                );
+
+            } else {
+                matchService.finishMatch(matchState);
+
+                room.setStatus(RoomStatus.FINISHED);
+                FinalLeaderboardPayload finalLeaderboard = leaderboardService.buildFinalLeaderboard(room.getPlayers());
+
+                roomRepository.save(room);
+
+                gameEventPublisher.publishMatchFinished(roomCode);
+                gameEventPublisher.publishFinalLeaderboard(roomCode, finalLeaderboard);
+
+            }
         });
     }
 
@@ -254,9 +297,9 @@ public class RoomService {
             MatchState matchState = room.getMatchState();
 
             matchService.activateRound(matchState, room.getSettings().getRoundDurationSeconds());
-
+            String maskedWord = matchState.getCurrentRound().getRoundWord().getMaskedWord();
             roomRepository.save(room);
-            gameEventPublisher.publishRoundStarted(room.getRoomCode(),  matchState.getCurrentRoundNumber());
+            gameEventPublisher.publishRoundStarted(room.getRoomCode(),  matchState.getCurrentRoundNumber(), maskedWord);
         });
     }
 
@@ -458,6 +501,9 @@ public class RoomService {
                     room.getPlayers()
             );
 
+            currentRound.showRoundResults();
+            currentRound.complete();
+
             roomRepository.save(room);
 
             gameEventPublisher.publishRoundTimeout(roomCode, currentRound.getRoundNumber());
@@ -492,6 +538,10 @@ public class RoomService {
                     round.getRoundNumber(),
                     room.getPlayers()
             );
+
+            round.showRoundResults();
+            round.complete();
+
             roomRepository.save(room);
 
             gameEventPublisher.publishSuddenDeathEnded(roomCode,round.getRoundNumber());
@@ -529,44 +579,6 @@ public class RoomService {
         });
     }
 
-    private void proceedAfterRound(String roomCode) {
-        roomLockManager.executeWithRoomLock(roomCode, () -> {
-            Room room = roomRepository.findByCode(roomCode)
-                    .orElseThrow(RoomNotFoundException::new);
-
-            MatchState matchState = room.getMatchState();
-            RoundState currentRound = matchState.getCurrentRound();
-
-            if (currentRound.getStatus() != RoundStatus.COMPLETED) {
-                return;
-            }
-
-            if (matchState.hasNextRound()) {
-                matchService.advanceToNextRound(matchState, room.getPlayers());
-
-                matchService.startRoundCountdown(matchState);
-
-                roomRepository.save(room);
-
-                gameEventPublisher.publishRoundCountdownStarted(
-                        roomCode,
-                        matchState.getCurrentRoundNumber()
-                );
-
-            } else {
-                matchService.finishMatch(matchState);
-
-                room.setStatus(RoomStatus.FINISHED);
-                FinalLeaderboardPayload finalLeaderboard = leaderboardService.buildFinalLeaderboard(room.getPlayers());
-
-                roomRepository.save(room);
-
-                gameEventPublisher.publishMatchFinished(roomCode);
-                gameEventPublisher.publishFinalLeaderboard(roomCode, finalLeaderboard);
-
-            }
-        });
-    }
 
     public void removeExpiredDisconnectedPlayer(String roomCode, String playerId, java.time.Instant now) {
         roomLockManager.executeWithRoomLock(roomCode, () -> {

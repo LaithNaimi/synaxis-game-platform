@@ -10,6 +10,7 @@ class LobbyState {
     this.gameStarted = false,
     this.roundNumber = 0,
     this.roundStarted = false,
+    this.maskedWord = '',
     this.error,
   });
 
@@ -29,6 +30,9 @@ class LobbyState {
   /// True once ROUND_STARTED is received — triggers navigation to game.
   final bool roundStarted;
 
+  /// Initial masked word from ROUND_STARTED (e.g. "_ _ _ _ _").
+  final String maskedWord;
+
   final String? error;
 
   LobbyState copyWith({
@@ -39,6 +43,7 @@ class LobbyState {
     bool? gameStarted,
     int? roundNumber,
     bool? roundStarted,
+    String? maskedWord,
     String? Function()? error,
   }) {
     return LobbyState(
@@ -49,6 +54,7 @@ class LobbyState {
       gameStarted: gameStarted ?? this.gameStarted,
       roundNumber: roundNumber ?? this.roundNumber,
       roundStarted: roundStarted ?? this.roundStarted,
+      maskedWord: maskedWord ?? this.maskedWord,
       error: error != null ? error() : this.error,
     );
   }

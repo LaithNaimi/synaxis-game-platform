@@ -41,8 +41,6 @@ public class MatchService {
                                         .englishDefinition(word.getEnglishDefinition())
                                         .build()
                                 ).toList()
-
-
                 )
                 .build();
 
@@ -53,10 +51,13 @@ public class MatchService {
                         room.getPlayers()
                 ));
 
+        for(Word word : words) {
+            System.out.println(word.getWord());
+        }
         return matchState;
     }
 
-    public RoundState createRoundState(int roundNumber, RoundWord roundWord, List<PlayerSession> players) {
+    private RoundState createRoundState(int roundNumber, RoundWord roundWord, List<PlayerSession> players) {
         Map<String, PlayerRoundProgress> playerProgressMap = new HashMap<>();
 
         for (PlayerSession player : players) {

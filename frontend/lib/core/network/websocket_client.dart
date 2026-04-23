@@ -19,6 +19,7 @@ class WebSocketClient {
   void connect({
     required void Function() onConnected,
     void Function(dynamic error)? onWebSocketError,
+    Map<String, String>? connectHeaders,
   }) {
     disconnect();
     _stomp = StompClient(
@@ -26,6 +27,7 @@ class WebSocketClient {
         url: _url,
         reconnectDelay: Duration.zero,
         connectionTimeout: const Duration(seconds: 10),
+        stompConnectHeaders: connectHeaders ?? {},
         onConnect: (_) => onConnected(),
         onWebSocketError: onWebSocketError ?? (_) {},
         onDebugMessage: kDebugMode ? (m) => AppLogger.debug(m) : (_) {},

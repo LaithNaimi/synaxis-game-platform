@@ -80,7 +80,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Set the Hearth',
+          'Set your room',
           style: AppTextStyles.title.copyWith(color: AppColors.onSurface),
         ),
         const SizedBox(height: AppSpacing.sm),

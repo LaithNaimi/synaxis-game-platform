@@ -68,7 +68,8 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       child: Text(
-        'THE ETHEREAL HEARTH',
+        'BEST GAME FOR LEARN',
+        //'THE ETHEREAL HEARTH',
         style: AppTextStyles.labelUppercase.copyWith(
           color: AppColors.primary,
           fontSize: 12,
@@ -80,7 +81,7 @@ class HomeScreen extends StatelessWidget {
   // ── Tagline ──────────────────────────────────────────────────────
   Widget _buildTagline() {
     return Text(
-      'Connect in the quiet corners of the galaxy A soft-futuristic social space designed for meaningful play and shared serenity.',
+      'A multiplayer game that helps you learn languages in a fun and interactive way.',
       textAlign: TextAlign.center,
       style: AppTextStyles.body.copyWith(fontSize: 17, height: 1.6),
     );

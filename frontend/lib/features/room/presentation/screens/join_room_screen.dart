@@ -63,7 +63,7 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Join the Hearth',
+          'Join the Room',
           style: AppTextStyles.title.copyWith(color: AppColors.onSurface),
         ),
         const SizedBox(height: AppSpacing.sm),
