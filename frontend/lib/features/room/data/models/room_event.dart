@@ -14,6 +14,19 @@ sealed class RoomEvent {
       'GAME_STARTED' => GameStartedEvent.fromJson(json),
       'ROUND_COUNTDOWN_STARTED' => RoundCountdownStartedEvent.fromJson(json),
       'ROUND_STARTED' => RoundStartedEvent.fromJson(json),
+      'PLAYER_ROUND_STATE' ||
+      'LETTER_GUESS_RESULT' ||
+      'PLAYER_STUNNED' ||
+      'PLAYER_RECOVERED' ||
+      'PLAYER_SOLVED_WORD' ||
+      'SUDDEN_DEATH_STARTED' ||
+      'SUDDEN_DEATH_ENDED' ||
+      'ROUND_TIMEOUT' ||
+      'LEARNING_REVEAL' ||
+      'ROUND_LEADERBOARD' ||
+      'MATCH_FINISHED' ||
+      'FINAL_LEADERBOARD' =>
+        GameEvent(type: type, roomCode: json['roomCode'] as String? ?? '', raw: json),
       _ => UnknownRoomEvent.fromJson(json),
     };
   }
@@ -96,17 +109,32 @@ class RoundStartedEvent extends RoomEvent {
     required super.type,
     super.roomCode,
     required this.roundNumber,
+    required this.maskedWord,
   });
 
   final int roundNumber;
+  final String maskedWord;
 
   factory RoundStartedEvent.fromJson(Map<String, dynamic> json) {
     return RoundStartedEvent(
       type: json['type'] as String,
       roomCode: json['roomCode'] as String? ?? '',
       roundNumber: json['roundNumber'] as int,
+      maskedWord: json['maskedWord'] as String? ?? '',
     );
   }
+}
+
+/// Wraps all in-game events (round topic + private queue) with raw JSON
+/// so the GameController can handle them without duplicating parsing here.
+class GameEvent extends RoomEvent {
+  const GameEvent({
+    required super.type,
+    super.roomCode,
+    required this.raw,
+  });
+
+  final Map<String, dynamic> raw;
 }
 
 class UnknownRoomEvent extends RoomEvent {

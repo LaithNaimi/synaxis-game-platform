@@ -127,7 +127,7 @@ public class RoundService {
     }
 
     private String buildMaskedWord(String word, Set<Character> correctLetters){
-        StringBuilder masked = new StringBuilder(word);
+        StringBuilder masked = new StringBuilder();
 
         for(char currentLetter : word.toCharArray()){
             if(correctLetters.contains(currentLetter)){

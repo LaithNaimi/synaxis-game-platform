@@ -11,4 +11,8 @@ public class RoundWord {
     private String word;
     private String arabicMeaning;
     private String englishDefinition;
+
+    public String getMaskedWord() {
+        return "_ ".repeat(word.length()).trim();
+    }
 }

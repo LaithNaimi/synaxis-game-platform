@@ -10,7 +10,7 @@ import java.util.Set;
 public class PlayerRoundStateEvent extends BaseEvent{
     private String maskedWord;
     private Set<Character> guessedLetters;
-    private Set<Character> correctedLetters;
+    private Set<Character> correctLetters;
     private Set<Character> wrongLetters;
     private boolean solved;
 

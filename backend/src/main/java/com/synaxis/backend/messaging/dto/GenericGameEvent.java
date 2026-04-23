@@ -12,5 +12,6 @@ import lombok.Setter;
 public class GenericGameEvent {
 
     private String type;
+    private String roomCode;
     private int roundNumber;
 }

@@ -26,8 +26,8 @@ public class GameEventPublisher {
                 TopicNames.roomTopic(roomCode),
                 event
         );
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishGameStarted(String roomCode) {
         GameStartedEvent event = new GameStartedEvent();
         event.setType("GAME_STARTED");
@@ -37,8 +37,8 @@ public class GameEventPublisher {
                 TopicNames.roomTopic(roomCode),
                 event
         );
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerJoined(
             String roomCode,
             String playerId,
@@ -53,8 +53,8 @@ public class GameEventPublisher {
         event.setHost(host);
 
         publishRoomEvent(roomCode, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishRoomRosterUpdated(String roomCode, String leavingPlayerId, String hostPlayerId){
         PlayerLeaveEvent event = new PlayerLeaveEvent();
         event.setType("PLAYER_LEAVE");
@@ -63,8 +63,8 @@ public class GameEventPublisher {
         event.setHostPlayerId(hostPlayerId);
 
         publishRoomEvent(roomCode, event);
-    }
-
+            System.out.println("room event published: publishRoomRosterUpdated");
+}
 
 
     public void publishRoundEvent(String roomCode, Object event) {
@@ -72,43 +72,43 @@ public class GameEventPublisher {
                 TopicNames.roomRoundTopic(roomCode),
                 event
         );
-    }
-
+            System.out.println("room event published: publishRoundEvent");
+}
     public void publishLeaderboardEvent(String roomCode, Object event) {
         messagingTemplate.convertAndSend(
                 TopicNames.roomLeaderboardTopic(roomCode),
                 event
         );
-    }
-
+            System.out.println("room event published: publishLeaderboardEvent");
+}
     public void publishPrivatePlayerEvent(String playerId, Object event) {
         messagingTemplate.convertAndSendToUser(
                 playerId,
                 TopicNames.userGameQueue(),
                 event
         );
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishRoundCountdownStarted(String roomCode, int roundNumber) {
         messagingTemplate.convertAndSend(
                 TopicNames.roomTopic(roomCode),
                 new GenericGameEvent(
                         "ROUND_COUNTDOWN_STARTED",
+                        roomCode,
                         roundNumber
                 )
         );
-    }
+        System.out.println("room event published: publishRoundCountdownStarted");
+}
+    public void publishRoundStarted(String roomCode, int roundNumber, String maskedWord) {
+        RoundStartedEvent event = new RoundStartedEvent();
+        event.setType("ROUND_STARTED");
+        event.setRoomCode(roomCode);
+        event.setRoundNumber(roundNumber);
+        event.setMaskedWord(maskedWord);
 
-    public void publishRoundStarted(String roomCode, int roundNumber) {
-        messagingTemplate.convertAndSend(
-                TopicNames.roomTopic(roomCode),
-                new GenericGameEvent(
-                        "ROUND_STARTED",
-                        roundNumber
-                )
-        );
-    }
-
+        publishRoundEvent(roomCode, event);
+}
     public void publishRoundTimeout(String roomCode, int roundNumber) {
         RoundTimeoutEvent event = new RoundTimeoutEvent();
         event.setType("ROUND_TIMEOUT");
@@ -116,16 +116,16 @@ public class GameEventPublisher {
         event.setRoundNumber(roundNumber);
 
         publishRoundEvent(roomCode, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishMatchFinished(String roomCode) {
         MatchFinishedEvent event = new MatchFinishedEvent();
         event.setType("MATCH_FINISHED");
         event.setRoomCode(roomCode);
 
         publishRoundEvent(roomCode, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishLetterGuessResult(
             String roomCode,
             String playerId,
@@ -141,8 +141,8 @@ public class GameEventPublisher {
         event.setScoreDelta(scoreDelta);
 
         publishPrivatePlayerEvent(playerId, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerRoundState(
             String roomCode,
             String playerId,
@@ -162,7 +162,7 @@ public class GameEventPublisher {
         event.setRoomCode(roomCode);
         event.setMaskedWord(maskedWord);
         event.setGuessedLetters(guessedLetters);
-        event.setCorrectedLetters(correctLetters);
+        event.setCorrectLetters(correctLetters);
         event.setWrongLetters(wrongLetters);
         event.setSolved(solved);
         event.setCurrentScore(currentScore);
@@ -172,9 +172,9 @@ public class GameEventPublisher {
         event.setPenaltyScoreDelta(penaltyScoreDelta);
         event.setStunned(stunned);
 
-        publishRoundEvent(roomCode, event);
-    }
-
+        publishPrivatePlayerEvent(playerId, event);
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerStunned(String roomCode, String playerId, Instant stunnedUntil){
         PlayerStunnedEvent event = new PlayerStunnedEvent();
         event.setType("PLAYER_STUNNED");
@@ -183,8 +183,8 @@ public class GameEventPublisher {
         event.setStunnedUntil(stunnedUntil);
 
         publishPrivatePlayerEvent(playerId, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerRecovered(String roomCode, String playerId, int recoveredHealth){
         PlayerRecoveredEvent event = new PlayerRecoveredEvent();
         event.setType("PLAYER_RECOVERED");
@@ -193,8 +193,8 @@ public class GameEventPublisher {
         event.setRestoredHealth(recoveredHealth);
 
         publishPrivatePlayerEvent(playerId, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerSolvedWord(String roomCode, String playerId, int roundNumber){
         PlayerSolverWordEvent event = new PlayerSolverWordEvent();
         event.setType("PLAYER_SOLVED_WORD");
@@ -203,8 +203,8 @@ public class GameEventPublisher {
         event.setRoundNumber(roundNumber);
 
         publishPrivatePlayerEvent(playerId, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishSuddenDeathStarted(String roomCode, String firstSolverPlayerId, int roundNumber, Instant suddenDeathAt){
         SuddenDeathStartedEvent event = new SuddenDeathStartedEvent();
         event.setType("SUDDEN_DEATH_STARTED");
@@ -213,9 +213,9 @@ public class GameEventPublisher {
         event.setFirstSolverPlayerId(firstSolverPlayerId);
         event.setSuddenDeathAt(suddenDeathAt);
 
-        publishPrivatePlayerEvent(firstSolverPlayerId, event);
-    }
-
+        publishRoomEvent(roomCode, event);
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerSolvedDuringSuddenDeath(String roomCode, String playerId, int roundNumber){
         PlayerSolvedDuringSuddenDeathEvent event = new PlayerSolvedDuringSuddenDeathEvent();
         event.setType("PLAYER_SOLVED_DURING_SUDDEN_DEATH");
@@ -224,44 +224,44 @@ public class GameEventPublisher {
         event.setRoundNumber(roundNumber);
 
         publishPrivatePlayerEvent(playerId, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishSuddenDeathEnded(String roomCode, int roundNumber){
         SuddenDeathEndedEvent event = new SuddenDeathEndedEvent();
         event.setType("SUDDEN_DEATH_ENDED");
         event.setRoomCode(roomCode);
         event.setRoundNumber(roundNumber);
 
-        publishPrivatePlayerEvent(roomCode, event);
-    }
-
+        publishRoomEvent(roomCode, event);
+            System.out.println("room event published: " + event);
+}
     public void publishLearningReveal(String roomCode, LearningRevealPayload payload){
         LearningRevealEvent event = new LearningRevealEvent();
         event.setType("LEARNING_REVEAL");
         event.setRoomCode(roomCode);
         event.setPayload(payload);
 
-        publishPrivatePlayerEvent(roomCode, event);
-    }
-
+        publishRoomEvent(roomCode, event);
+            System.out.println("room event published: " + event);
+}
     public void publishRoundLeaderboard(String roomCode, RoundLeaderboardPayload payload){
         RoundLeaderboardEvent event = new RoundLeaderboardEvent();
         event.setType("ROUND_LEADERBOARD");
         event.setRoomCode(roomCode);
         event.setPayload(payload);
 
-        publishPrivatePlayerEvent(roomCode, event);
-    }
-
+        publishRoomEvent(roomCode, event);
+            System.out.println("room event published: " + event);
+}
     public void publishFinalLeaderboard(String roomCode, FinalLeaderboardPayload payload){
         FinalLeaderboardEvent event = new FinalLeaderboardEvent();
         event.setType("FINAL_LEADERBOARD");
         event.setRoomCode(roomCode);
         event.setPayload(payload);
 
-        publishPrivatePlayerEvent(roomCode, event);
-    }
-
+        publishRoomEvent(roomCode, event);
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerDisconnected(String roomCode, String playerId, Instant reconnectDeadline){
         PlayerDisconnectedEvent event = new PlayerDisconnectedEvent();
         event.setType("PLAYER_DISCONNECTED");
@@ -270,8 +270,8 @@ public class GameEventPublisher {
         event.setReconnectDeadline(reconnectDeadline);
 
         publishPrivatePlayerEvent(playerId, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerRemovedAfterDisconnect(String roomCode, String playerId){
         PlayerRemovedAfterDisconnectEvent event = new PlayerRemovedAfterDisconnectEvent();
         event.setType("PLAYER_REMOVED_AFTER_DISCONNECT");
@@ -279,18 +279,18 @@ public class GameEventPublisher {
         event.setPlayerId(playerId);
 
         publishPrivatePlayerEvent(playerId, event);
-    }
-
-    public void publishHostTransferred(String roonCode, String previousHostPlayerId, String newHostPlayerId){
+            System.out.println("room event published: " + event);
+}
+    public void publishHostTransferred(String roomCode, String previousHostPlayerId, String newHostPlayerId){
         HostTransferredEvent event = new HostTransferredEvent();
         event.setType("HOST_TRANSFERRED");
-        event.setRoomCode(roonCode);
+        event.setRoomCode(roomCode);
         event.setPreviousHostPlayerId(previousHostPlayerId);
         event.setNewHostPlayerId(newHostPlayerId);
 
-        publishPrivatePlayerEvent(previousHostPlayerId, event);
-    }
-
+        publishRoomEvent(roomCode, event);
+            System.out.println("room event published: " + event);
+}
     public void publishPlayerReconnected(String roomCode, String playerId) {
         PlayerReconnectedEvent event = new PlayerReconnectedEvent();
         event.setType("PLAYER_RECONNECTED");
@@ -298,8 +298,8 @@ public class GameEventPublisher {
         event.setPlayerId(playerId);
 
         publishRoomEvent(roomCode, event);
-    }
-
+            System.out.println("room event published: " + event);
+}
     public void publishResyncSnapshot(String roomCode, String playerId, ResyncSnapshot snapshot) {
         ResyncSnapshotEvent event = new ResyncSnapshotEvent();
         event.setType("RESYNC_SNAPSHOT");
@@ -307,5 +307,5 @@ public class GameEventPublisher {
         event.setPayload(snapshot);
 
         publishPrivatePlayerEvent(playerId, event);
-    }
-}
+            System.out.println("room event published: " + event);
+}}
