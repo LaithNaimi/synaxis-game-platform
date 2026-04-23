@@ -41,13 +41,11 @@ GoRouter createAppRouter() {
       ),
       GoRoute(
         path: RouteNames.countdown,
-        builder: (context, _) =>
-            const AppPageShell(title: 'Countdown', child: CountdownScreen()),
+        builder: (context, _) => const CountdownScreen(),
       ),
       GoRoute(
         path: RouteNames.game,
-        builder: (context, _) =>
-            const AppPageShell(title: 'Game', child: GameScreen()),
+        builder: (context, _) => const GameScreen(),
       ),
       GoRoute(
         path: RouteNames.learning,
