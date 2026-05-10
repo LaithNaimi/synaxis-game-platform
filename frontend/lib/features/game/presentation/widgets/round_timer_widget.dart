@@ -52,9 +52,13 @@ class _RoundTimerWidgetState extends State<RoundTimerWidget> {
 
     final now = DateTime.now();
 
-    if (widget.suddenDeath && widget.suddenDeathAt != null) {
-      final diff = widget.suddenDeathAt!.difference(now).inSeconds;
-      setState(() => _secondsLeft = diff.clamp(0, 999));
+    if (widget.suddenDeath) {
+      if (widget.suddenDeathAt != null) {
+        final diff = widget.suddenDeathAt!.difference(now).inSeconds;
+        setState(() => _secondsLeft = diff.clamp(0, 999));
+      } else {
+        setState(() => _secondsLeft = 0);
+      }
       return;
     }
 

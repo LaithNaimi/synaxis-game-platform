@@ -1,10 +1,10 @@
 package com.synaxis.backend.match.service;
 
+import com.synaxis.backend.common.exception.RoomNotFoundException;
 import com.synaxis.backend.room.model.PlayerSession;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.room.model.RoomStatus;
 import com.synaxis.backend.room.service.RoomService;
-import com.synaxis.backend.room.ws.event.PlayerStunnedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,11 @@ public class StunRecoveryScheduler {
 
             for(PlayerSession player : room.getPlayers()){
                 if(player.isStunned()){
-                    roomService.recoverPlayer(room.getRoomCode(), player.getPlayerId(), Instant.now());
+                    try {
+                        roomService.recoverPlayer(room.getRoomCode(), player.getPlayerId(), Instant.now());
+                    } catch (RoomNotFoundException ignored) {
+                        // Room removed between snapshot and lock
+                    }
                 }
             }
         }

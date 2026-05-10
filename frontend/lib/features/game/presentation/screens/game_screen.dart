@@ -47,6 +47,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               totalRounds: session.roomSettings.totalRounds,
               maskedWord: lobbyState.maskedWord,
               roundDurationSeconds: session.roomSettings.roundDurationSeconds,
+              roundStartedAt: lobbyState.roundStartedAt ?? DateTime.now(),
             );
       });
     }
@@ -75,7 +76,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 borderRadius: BorderRadius.circular(AppSpacing.xs),
               ),
               child: Text(
-                'ROUND ${gameState.roundNumber.toString().padLeft(2, '0')}/${gameState.totalRounds.toString().padLeft(2, '0')}',
+                'ROUND ${gameState.roundNumber}/${gameState.totalRounds}',
                 style: AppTextStyles.micro.copyWith(
                   color: AppColors.onSurface,
                   letterSpacing: 1,

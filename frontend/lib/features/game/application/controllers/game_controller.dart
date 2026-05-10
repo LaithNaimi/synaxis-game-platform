@@ -22,6 +22,7 @@ class GameController extends Notifier<GameState> {
     required int totalRounds,
     required String maskedWord,
     required int roundDurationSeconds,
+    DateTime? roundStartedAt,
   }) {
     _ws = ws;
     _roomCode = roomCode;
@@ -33,7 +34,7 @@ class GameController extends Notifier<GameState> {
       totalRounds: totalRounds,
       maskedWord: maskedWord,
       roundDurationSeconds: roundDurationSeconds,
-      roundStartedAt: DateTime.now(),
+      roundStartedAt: roundStartedAt ?? DateTime.now(),
     );
   }
 
@@ -111,6 +112,7 @@ class GameController extends Notifier<GameState> {
 
   void onSuddenDeathEnded() {
     state = state.copyWith(
+      suddenDeath: false,
       suddenDeathEnded: true,
       roundEnded: true,
     );

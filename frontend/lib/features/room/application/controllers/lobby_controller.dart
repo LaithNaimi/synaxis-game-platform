@@ -84,10 +84,19 @@ class LobbyController extends Notifier<LobbyState> {
       case GameStartedEvent():
         state = state.copyWith(gameStarted: true, isStarting: false);
       case RoundCountdownStartedEvent(:final roundNumber):
-        state = state.copyWith(roundNumber: roundNumber, roundStarted: false, maskedWord: '');
+        state = state.copyWith(
+          roundNumber: roundNumber,
+          roundStarted: false,
+          maskedWord: '',
+          roundStartedAt: () => null,
+        );
         ref.read(gameControllerProvider.notifier).resetForNextRound();
-      case RoundStartedEvent(:final maskedWord):
-        state = state.copyWith(roundStarted: true, maskedWord: maskedWord);
+      case RoundStartedEvent(:final maskedWord, :final startedAt):
+        state = state.copyWith(
+          roundStarted: true,
+          maskedWord: maskedWord,
+          roundStartedAt: () => startedAt,
+        );
       case GameEvent(:final type, :final raw):
         _forwardToGameController(type, raw);
       case UnknownRoomEvent():
@@ -122,6 +131,8 @@ class LobbyController extends Notifier<LobbyState> {
         gc.onMatchFinished();
       case 'FINAL_LEADERBOARD':
         gc.onFinalLeaderboard(raw);
+      case 'PLAYER_SOLVED_DURING_SUDDEN_DEATH':
+        break;
     }
   }
 

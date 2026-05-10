@@ -15,8 +15,10 @@ import com.synaxis.backend.room.model.RoomSettings;
 import com.synaxis.backend.room.model.RoomStatus;
 import com.synaxis.backend.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -26,13 +28,14 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class RoomService {
 
     private static final int ROOM_CODE_LENGTH = 6;
     private static final int PLAYER_ID_LENGTH = 8;
     private static final int FULL_HEALTH = 100;
-    private static final int FIRST_SOLVER_BONUS = 150;
-    private static final int SOLVED_DURING_SUDDEN_DEATH_BONUS = 20;
+    private static final int COUNTDOWN_SECONDS = 4;
+    private static final int SOLVED_DURING_SUDDEN_DEATH_HEALTH = 20;
 
     private final RoomRepository roomRepository;
     private final RoomLockManager roomLockManager;
@@ -246,7 +249,7 @@ public class RoomService {
 
             matchService.startRoundCountdown(matchState);
             gameEventPublisher.publishRoundCountdownStarted(room.getRoomCode(), matchState.getCurrentRoundNumber());
-            scheduler.schedule(() -> startRound(roomCode),4, TimeUnit.SECONDS);
+            scheduler.schedule(() -> startRound(roomCode), COUNTDOWN_SECONDS, TimeUnit.SECONDS);
         });
     }
 
@@ -273,6 +276,7 @@ public class RoomService {
                         roomCode,
                         matchState.getCurrentRoundNumber()
                 );
+                scheduler.schedule(() -> startRound(roomCode), COUNTDOWN_SECONDS, TimeUnit.SECONDS);
 
             } else {
                 matchService.finishMatch(matchState);
@@ -299,7 +303,13 @@ public class RoomService {
             matchService.activateRound(matchState, room.getSettings().getRoundDurationSeconds());
             String maskedWord = matchState.getCurrentRound().getRoundWord().getMaskedWord();
             roomRepository.save(room);
-            gameEventPublisher.publishRoundStarted(room.getRoomCode(),  matchState.getCurrentRoundNumber(), maskedWord);
+            RoundState currentRoundForStart = matchState.getCurrentRound();
+            gameEventPublisher.publishRoundStarted(
+                    room.getRoomCode(),
+                    matchState.getCurrentRoundNumber(),
+                    maskedWord,
+                    currentRoundForStart.getStartedAt()
+            );
         });
     }
 
@@ -309,12 +319,12 @@ public class RoomService {
             Room room = roomRepository.findByCode(roomCode)
                     .orElseThrow(RoomNotFoundException::new);
 
-            GuessApplicationResult applyResult = roundService.applyGuess(room, playerId, letter);
-
             PlayerSession player = room.findPlayerById(playerId);
             if(player == null){
                 throw new IllegalStateException("Player not found after guess");
             }
+
+            GuessApplicationResult applyResult = roundService.applyGuess(room, playerId, letter);
 
             int scoreDelta = 0;
             int healthDelta = 0;
@@ -333,6 +343,7 @@ public class RoomService {
                 );
 
                 scoreDelta = scoreBreakdown.getTotalScore();
+                log.debug("correct guess score delta: {}", scoreDelta);
                 player.setScore(player.getScore() + scoreDelta);
             }
             else {
@@ -353,6 +364,38 @@ public class RoomService {
                 }
             }
 
+            FirstSolverResult firstSolverResult = new FirstSolverResult(false, false, null);
+            if(applyResult.isSolved()){
+                Instant roundStart = room.getMatchState().getCurrentRound().getStartedAt();
+                if (roundStart != null) {
+                    long solveMs = Duration.between(roundStart, Instant.now()).toMillis();
+                    player.setTotalSolveTimeMs(player.getTotalSolveTimeMs() + solveMs);
+                }
+                firstSolverResult = roundService.registerFirstSolver(room, playerId);
+
+                if (firstSolverResult.isFirstSolver()){
+                    scoreDelta += ScoreCalculator.FIRST_SOLVER_BONUS;
+                    healthDelta += (FULL_HEALTH - player.getHealth());
+                    player.setScore(player.getScore() + ScoreCalculator.FIRST_SOLVER_BONUS);
+                    player.setHealth(FULL_HEALTH);
+                }
+            }
+
+            boolean solvedDuringSuddenDeath = false;
+            RoundState currentRound = room.getMatchState().getCurrentRound();
+
+            if(applyResult.isSolved() && currentRound.isInSuddenDeath() && !currentRound.isFirstSolver(playerId)){
+                int updatedHealth = Math.min(FULL_HEALTH, player.getHealth() + SOLVED_DURING_SUDDEN_DEATH_HEALTH);
+                healthDelta += (updatedHealth - player.getHealth());
+                player.setHealth(updatedHealth);
+
+                int updatedScore = player.getScore() + ScoreCalculator.SUDDEN_DEATH_COMPLETION_BONUS;
+                scoreDelta += (updatedScore -  player.getScore());
+                player.setScore(updatedScore);
+
+                solvedDuringSuddenDeath = true;
+            }
+
             GuessHandlingResult guessResult = new GuessHandlingResult(
                     applyResult.getLetter(),
                     applyResult.isCorrect(),
@@ -365,27 +408,6 @@ public class RoomService {
                     penaltyScoreDelta,
                     stunned
             );
-
-            FirstSolverResult firstSolverResult = new FirstSolverResult(false, false, null);
-            if(applyResult.isSolved()){
-                firstSolverResult = roundService.registerFirstSolver(room, playerId);
-
-                if (firstSolverResult.isFirstSolver()){
-                    player.setScore(player.getScore() + FIRST_SOLVER_BONUS);
-                    player.setHealth(FULL_HEALTH);
-                }
-            }
-
-            boolean solvedDuringSuddenDeath = false;
-            RoundState currentRound = room.getMatchState().getCurrentRound();
-
-            if(applyResult.isSolved() && currentRound.isInSuddenDeath() && !currentRound.isFirstSolver(playerId)){
-                int updatedHealth = Math.min(FULL_HEALTH, player.getHealth() + SOLVED_DURING_SUDDEN_DEATH_BONUS);
-                healthDelta += (updatedHealth - player.getHealth());
-                player.setHealth(updatedHealth);
-
-                solvedDuringSuddenDeath = true;
-            }
 
             roomRepository.save(room);
 

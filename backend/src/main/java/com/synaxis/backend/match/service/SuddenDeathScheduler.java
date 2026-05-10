@@ -1,12 +1,12 @@
 package com.synaxis.backend.match.service;
 
+import com.synaxis.backend.common.exception.RoomNotFoundException;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.room.model.RoomStatus;
 import com.synaxis.backend.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
@@ -26,7 +26,11 @@ public class SuddenDeathScheduler {
                 continue;
             }
 
-            roomService.endSuddenDeathIfNeed(room.getRoomCode(), Instant.now());
+            try {
+                roomService.endSuddenDeathIfNeed(room.getRoomCode(), Instant.now());
+            } catch (RoomNotFoundException ignored) {
+                // Room removed between snapshot and lock
+            }
         }
     }
 }

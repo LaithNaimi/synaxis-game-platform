@@ -19,6 +19,7 @@ sealed class RoomEvent {
       'PLAYER_STUNNED' ||
       'PLAYER_RECOVERED' ||
       'PLAYER_SOLVED_WORD' ||
+      'PLAYER_SOLVED_DURING_SUDDEN_DEATH' ||
       'SUDDEN_DEATH_STARTED' ||
       'SUDDEN_DEATH_ENDED' ||
       'ROUND_TIMEOUT' ||
@@ -110,17 +111,27 @@ class RoundStartedEvent extends RoomEvent {
     super.roomCode,
     required this.roundNumber,
     required this.maskedWord,
+    this.startedAt,
   });
 
   final int roundNumber;
   final String maskedWord;
 
+  /// Server-authoritative round start time (ISO 8601 from backend).
+  final DateTime? startedAt;
+
   factory RoundStartedEvent.fromJson(Map<String, dynamic> json) {
+    DateTime? startedAt;
+    final raw = json['startedAt'];
+    if (raw is String && raw.isNotEmpty) {
+      startedAt = DateTime.tryParse(raw);
+    }
     return RoundStartedEvent(
       type: json['type'] as String,
       roomCode: json['roomCode'] as String? ?? '',
       roundNumber: json['roundNumber'] as int,
       maskedWord: json['maskedWord'] as String? ?? '',
+      startedAt: startedAt,
     );
   }
 }

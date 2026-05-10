@@ -17,6 +17,7 @@ import java.util.Set;
 public class RoundService {
 
     private static final int SECONDS_AFTER_SOLVED = 10;
+
     public PlayerRoundProgress validateGuess(Room room, String playerId, char letter){
         if(room.getMatchState() == null || room.getMatchState().getCurrentRound() == null){
             throw new IllegalArgumentException("No action round available");

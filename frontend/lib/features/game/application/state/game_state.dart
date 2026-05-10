@@ -54,7 +54,12 @@ class GameState {
   final RoundLeaderboardData? finalLeaderboard;
 
   bool get inputBlocked =>
-      solved || stunned || roundTimedOut || suddenDeathEnded || roundEnded;
+      solved ||
+      stunned ||
+      roundTimedOut ||
+      suddenDeathEnded ||
+      roundEnded ||
+      matchFinished;
 
   GameState copyWith({
     int? roundNumber,
