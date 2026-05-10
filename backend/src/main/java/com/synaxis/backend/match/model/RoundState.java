@@ -77,7 +77,8 @@ public class RoundState {
     }
 
     public boolean isAcceptingGuesses(){
-         return this.status == RoundStatus.ACTIVE;
+         return this.status == RoundStatus.ACTIVE
+                 || this.status == RoundStatus.SUDDEN_DEATH;
     }
 
     private void requireStatus(RoundStatus expected) {

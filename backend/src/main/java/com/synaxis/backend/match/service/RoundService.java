@@ -100,7 +100,6 @@ public class RoundService {
 
         Instant now = Instant.now();
         Instant suddenDeathAt = now.plusSeconds(SECONDS_AFTER_SOLVED);
-
         round.enterSuddenDeath(playerId, now, suddenDeathAt);
 
         return new FirstSolverResult(true,true,suddenDeathAt);

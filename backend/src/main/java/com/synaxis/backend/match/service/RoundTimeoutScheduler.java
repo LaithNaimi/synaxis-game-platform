@@ -1,5 +1,6 @@
 package com.synaxis.backend.match.service;
 
+import com.synaxis.backend.common.exception.RoomNotFoundException;
 import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.room.model.RoomStatus;
 import com.synaxis.backend.room.service.RoomService;
@@ -23,7 +24,11 @@ public class RoundTimeoutScheduler {
                 continue;
             }
 
-            roomService.timeoutCurrentRoundIfNeed(room.getRoomCode());
+            try {
+                roomService.timeoutCurrentRoundIfNeed(room.getRoomCode());
+            } catch (RoomNotFoundException ignored) {
+                // Room removed between snapshot and lock
+            }
         }
     }
 }

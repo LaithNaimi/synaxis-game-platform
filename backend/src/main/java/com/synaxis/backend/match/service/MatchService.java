@@ -6,6 +6,7 @@ import com.synaxis.backend.room.model.Room;
 import com.synaxis.backend.word.service.CefrWordSelector;
 import com.synaxis.backend.word.model.Word;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MatchService {
 
     private final CefrWordSelector cefrWordSelector;
@@ -53,6 +55,11 @@ public class MatchService {
                         room.getPlayers()
                 ));
 
+        if (log.isDebugEnabled()) {
+            for (Word word : words) {
+                log.debug("match word selected: {}", word.getWord());
+            }
+        }
         return matchState;
     }
 
@@ -96,6 +103,11 @@ public class MatchService {
     public void advanceToNextRound(MatchState matchState, List<PlayerSession> players) {
         if (!matchState.hasNextRound()) {
             throw new IllegalStateException("No more rounds available");
+        }
+
+        for (PlayerSession player : players) {
+            player.setStunned(false);
+            player.setStunnedUntil(null);
         }
 
         int nextRoundNumber = matchState.getCurrentRoundNumber() + 1;
